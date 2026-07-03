@@ -1415,13 +1415,15 @@ body::after {
 .route-page {
   display: none;
   min-height: 0;
-  overflow: hidden;
-  padding: 0;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 0 calc(env(safe-area-inset-bottom, 0px) + 8px);
 }
 
 .route-page.active {
   display: block;
-  height: 100%;
 }
 
 .toast {
@@ -1567,20 +1569,21 @@ body::after {
   .login-screen { padding: 12px; align-items: center; }
   .login-box { margin-top: 70px; padding: 76px 22px 24px; border-radius: 30px; }
   .login-cat { top: -94px; width: min(250px, 76vw); }
-  .app-shell { padding: 0; border-radius: 0; height: 100dvh; }
-  .topbar { padding: 12px 12px 0; }
-  .route-nav { padding: 0 12px; }
-  .topbar { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .app-shell { padding: 0; border-radius: 0; height: 100dvh; gap: 6px; }
+  .topbar { padding: 10px 10px 0; }
+  .route-nav { padding: 0 10px; }
+  .topbar { align-items: flex-start; flex-direction: column; gap: 6px; }
   .brand strong { font-size: 1rem; }
   .brand small { font-size: 0.58rem; }
-  .sync-pill { padding: 7px 10px; font-size: 0.72rem; }
+  .sync-pill { padding: 6px 10px; font-size: 0.7rem; }
   .hero { padding: 14px; border-radius: 24px; }
   .hero h2 { font-size: 1.34rem; }
   .hero p { font-size: 0.82rem; }
   .hero-actions .btn { flex: 1 1 100%; }
   .route-nav { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
-  .route-link { padding: 8px 4px; font-size: 0.74rem; border-radius: 16px; }
+  .route-link { padding: 7px 3px; font-size: 0.72rem; border-radius: 15px; }
   .route-link small { display: none; }
+  .route-page { padding: 0 0 calc(env(safe-area-inset-bottom, 0px) + 14px); }
   .days-strip { gap: 6px; }
   .day-card { padding: 6px 2px; border-radius: 8px; }
   .day-card .day-date { font-size: 0.8rem; }
@@ -1594,21 +1597,23 @@ body::after {
   .field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
   .field.compact-span { grid-column: span 1; }
   .field.full { grid-column: 1 / -1; }
-  .field { padding: 7px; }
+  .field { padding: 6px; border-radius: 16px; }
   .edit-card,
   .route-card,
   .setup-card,
   .history-card { border-radius: 24px 24px 0 0; }
   .chart-card { border-radius: 24px; }
   .field label { font-size: 0.62rem; }
-  .field input, .field select, .field textarea { min-height: 36px; padding: 7px 8px; font-size: 0.8rem; }
+  .field input, .field select, .field textarea { min-height: 34px; padding: 6px 8px; font-size: 0.78rem; }
   .date-field input { min-height: 42px; padding-right: 40px; }
   .date-field::after { right: 14px; bottom: 13px; width: 22px; height: 22px; }
   .check-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
   .choice { padding: 5px 2px; font-size: 0.72rem; }
   .choice div:last-child { display: none; }
-  .edit-card h3 { font-size: 1rem; }
-  .mood-chip { padding: 6px 9px; font-size: 0.68rem; }
+  .edit-card { padding: 14px 12px 12px; }
+  .edit-card h3 { margin: 8px 0 5px; font-size: 0.96rem; }
+  .mood-chip { padding: 6px 9px; font-size: 0.66rem; }
+  .mood-meter { margin: 7px 0 8px; }
   .mini-stat { padding: 8px; }
   .mini-stat .value { font-size: 0.96rem; }
   #page-week .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1626,6 +1631,8 @@ body::after {
   .settings-mirror { display: none; }
   .setup-actions .btn { min-height: 38px; padding: 8px 12px; }
   .footer-tip { display: none; }
+  #page-today .single-panel,
+  #page-today .edit-card { min-height: auto; height: auto; }
 }
 </style>
 </head>
