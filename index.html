@@ -1880,7 +1880,7 @@ body::after {
               </div>
               <button class="week-arrow" type="button" onclick="changeWeek(1)">›</button>
             </div>
-            <div class="swipe-hint">左右滑切换周，点某一天进入当天编辑。</div>
+            <div class="swipe-hint">左右滑切换周，点某一天进入当天数据。</div>
             <div class="days-strip" id="daysStrip"></div>
           </div>
 
@@ -2358,7 +2358,7 @@ function getWeekDates(weekStartStr) {
 
 function getRecordByDate(dateStr) {
   if (!dateStr) return null;
-  return Object.values(data).find(entry => entry && entry.date === dateStr) || null;
+  return Object.values(data).find(entry => entry && String(entry.date || '').slice(0, 10) === dateStr) || null;
 }
 
 function upsertEntryByDate(dateStr) {
@@ -2946,7 +2946,7 @@ async function loadAllData() {
     if (records) {
       for (const row of records) {
         data[row.day] = {
-          date: row.record_date || '',
+          date: String(row.record_date || '').slice(0, 10),
           morningWeight: row.morning_weight ?? '',
           eveningWeight: row.evening_weight ?? '',
           bodyFat: row.body_fat ?? '',
@@ -3067,7 +3067,8 @@ function applyMoodTheme(mood) {
 }
 
 function renderApp() {
-  selectedDay = Math.max(1, diffDays(setup.start_date || getTodayDate(), getTodayDate()) + 1);
+  if (!activeEntryDate) activeEntryDate = getTodayDate();
+  selectedDay = Math.max(1, diffDays(setup.start_date || activeEntryDate, activeEntryDate) + 1);
   currentWeek = findWeekForDay(selectedDay);
   currentWeekStart = getMonday(getTodayDate());
   weekViewStart = weekViewStart || currentWeekStart;
@@ -3120,6 +3121,11 @@ function getDayCardStyle(state, day) {
     ? `0 0 0 1px ${visual.dayBorder} inset, 0 12px 24px ${visual.soft}`
     : '0 8px 18px rgba(0,0,0,0.10)';
   return `background:${visual.dayBg}; border-color:${visual.dayBorder}; box-shadow:${activeRing};`;
+}
+
+function getHistoryRowStyle(state) {
+  const visual = getMoodVisual(state.key);
+  return `background:${visual.dayBg}; border-color:${visual.dayBorder}; box-shadow:0 10px 22px ${visual.soft};`;
 }
 
 function openDatePicker(target = 'today') {
@@ -3290,52 +3296,41 @@ function handleEntryDateAction() {
 }
 
 function renderStats() {
-  let latestWeight = null;
-  let latestBodyFat = null;
-  let latestCompare = null;
-  let exerciseDays = 0;
-  let filledDays = 0;
-
-  const entries = Object.values(data).filter(Boolean).sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
-  for (const entry of entries) {
-    const displayWeight = getDisplayWeight(entry);
-    const bodyFat = getBodyFatValue(entry);
-    const compare = getMorningEveningDiff(entry);
-    if (displayWeight !== null) latestWeight = displayWeight;
-    if (bodyFat !== null) latestBodyFat = bodyFat;
-    if (compare !== null) latestCompare = compare;
-    if (entry.exercise) exerciseDays++;
-    if (isDayFilled(entry)) filledDays++;
-  }
-
+  const activeDay = selectedDay || 1;
+  const activeDate = activeEntryDate || getEntryDate(activeDay) || getTodayDate();
+  const activeEntry = getRecordByDate(activeDate) || data[activeDay] || {};
+  const currentWeight = getDisplayWeight(activeEntry);
+  const currentBodyFat = getBodyFatValue(activeEntry);
+  const currentCompare = getMorningEveningDiff(activeEntry);
   const startWeight = setup.start_weight ? parseFloat(setup.start_weight) : null;
   const goalWeight = setup.goal_weight ? parseFloat(setup.goal_weight) : null;
   const weekSummary = getWeekSummary(currentWeek);
+  const filledDays = Object.values(data).filter(entry => isDayFilled(entry || {})).length;
+  const elapsedDays = Math.min(TOTAL_DAYS, Math.max(1, diffDays(setup.start_date || getTodayDate(), getTodayDate()) + 1));
 
-  qs('currentWeight').textContent = formatValue(latestWeight, 'kg');
-  qs('bodyFatStat').textContent = formatValue(latestBodyFat, '%');
-  qs('dailyCompare').textContent = latestCompare !== null ? formatDiff(latestCompare, 'kg') : '—';
-  qs('exerciseDays').textContent = `${exerciseDays} 天`;
+  qs('currentWeight').textContent = formatValue(currentWeight, 'kg');
+  qs('bodyFatStat').textContent = formatValue(currentBodyFat, '%');
+  qs('dailyCompare').textContent = currentCompare !== null ? formatDiff(currentCompare, 'kg') : '—';
+  qs('exerciseDays').textContent = activeEntry.exercise ? '1 天' : '0 天';
   qs('totalDays').textContent = `${filledDays} / 100`;
   qs('weekCompletion').textContent = `${weekSummary.filled} / ${weekSummary.total}`;
   qs('startWeightLabel').textContent = formatValue(startWeight, 'kg');
   qs('goalWeightLabel').textContent = formatValue(goalWeight, 'kg');
 
-  if (startWeight !== null && latestWeight !== null) {
-    const loss = startWeight - latestWeight;
+  if (startWeight !== null && currentWeight !== null) {
+    const loss = startWeight - currentWeight;
     qs('totalLoss').textContent = `${loss >= 0 ? '-' : '+'}${Math.abs(loss).toFixed(1)} kg`;
   } else {
     qs('totalLoss').textContent = '—';
   }
 
-  if (goalWeight !== null && latestWeight !== null) {
-    const diff = latestWeight - goalWeight;
+  if (goalWeight !== null && currentWeight !== null) {
+    const diff = currentWeight - goalWeight;
     qs('toGoal').textContent = diff <= 0 ? '已达标' : `${diff.toFixed(1)} kg`;
   } else {
     qs('toGoal').textContent = '—';
   }
 
-  const elapsedDays = Math.min(TOTAL_DAYS, Math.max(1, diffDays(setup.start_date || getTodayDate(), getTodayDate()) + 1));
   const pct = Math.round((elapsedDays / TOTAL_DAYS) * 100);
   qs('progressLabel').textContent = `${pct}%`;
   qs('progressFill').style.width = `${pct}%`;
@@ -3367,15 +3362,16 @@ function renderHistory() {
     const dateText = getDateLabel(dateStr);
     const bodyFat = getBodyFatValue(entry);
     const weight = getDisplayWeight(entry);
+    const exerciseLabel = entry.exType || (entry.exercise ? '已运动' : '未运动');
     const clickable = isDayFilled(entry);
     return `
-      <div class="history-row" ${clickable ? `onclick="jumpToDay(${day})" style="cursor:pointer"` : 'style="opacity:.62"'} >
+      <div class="history-row" ${clickable ? `onclick="jumpToDay(${day})" style="${getHistoryRowStyle(state)}cursor:pointer"` : `style="${getHistoryRowStyle(state)}opacity:.62"`} >
         <div class="history-day">${parseDateOnly(dateStr)?.getDate() || ''}</div>
         <div class="history-main">
           <strong>${dateText}</strong>
           <span>${weight !== null ? `${weight.toFixed(1)} kg` : '待记录'} · ${bodyFat !== null ? `${bodyFat.toFixed(1)}% 体脂` : '未填体脂'} · ${state.label.replace('今日状态 · ', '')}</span>
         </div>
-        <div class="history-side">${entry.exercise ? '已运动' : '未运动'}</div>
+        <div class="history-side">${exerciseLabel}</div>
       </div>
     `;
   }).join('');
@@ -3499,12 +3495,14 @@ function buildLinePath(points) {
 function selectDay(day) {
   selectedDay = day;
   currentWeek = findWeekForDay(day);
+  activeEntryDate = getEntryDate(day) || getTodayDate();
   renderApp();
 }
 
 function jumpToDay(day) {
   selectedDay = day;
   currentWeek = findWeekForDay(day);
+  activeEntryDate = getEntryDate(day) || getTodayDate();
   historyWeek = currentWeek;
   renderApp();
   navigateTo('today');
