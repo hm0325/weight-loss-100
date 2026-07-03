@@ -2006,6 +2006,7 @@ let saveTimer = null;
 let touchStartX = null;
 let touchStartY = null;
 let datePickerMonth = null;
+let lastSyncError = '';
 
 function qs(id) {
   return document.getElementById(id);
@@ -2062,6 +2063,16 @@ function initSupabase() {
   }
   supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   return true;
+}
+
+function canUseRemote() {
+  return !!(supabaseClient && currentUser && !currentUser.localOnly);
+}
+
+function markOffline(error, context) {
+  lastSyncError = error?.message || error?.details || error?.hint || String(error || context || '同步失败');
+  console.warn(context || 'remote sync failed', error);
+  setSync('offline');
 }
 
 function ensureEntry(day) {
@@ -2441,24 +2452,56 @@ async function loginUser(username, password) {
     if (error) throw error;
     if (user && user.password_hash === passwordHash) {
       currentUser = { id: user.id, username: user.username, display_name: user.display_name || user.username };
+      isOnline = true;
       await loadUserSetup();
       await showMainApp();
       return;
     }
+    if (await tryLocalLogin(username, passwordHash)) return;
     await tryLegacyLogin(username, password);
   } catch (error) {
     console.warn('login fallback to local cache', error);
-    const users = JSON.parse(localStorage.getItem('bb_local_users') || '{}');
-    const localUser = users[username];
-    if (localUser && localUser.password_hash === passwordHash) {
-      currentUser = { id: localUser.id, username, display_name: localUser.display_name || username, localOnly: true };
-      setup = JSON.parse(localStorage.getItem(getUserCacheKey('settings')) || 'null') || makeDefaultSetup();
-      isOnline = false;
-      await showMainApp();
-      return;
-    }
+    if (await tryLocalLogin(username, passwordHash)) return;
     await tryLegacyLogin(username, password);
   }
+}
+
+async function tryLocalLogin(username, passwordHash) {
+  const users = JSON.parse(localStorage.getItem('bb_local_users') || '{}');
+  const localUser = users[username];
+  if (!localUser || localUser.password_hash !== passwordHash) return false;
+
+  currentUser = {
+    id: localUser.id || uuid(),
+    username,
+    display_name: localUser.display_name || username
+  };
+  setup = JSON.parse(localStorage.getItem(getUserCacheKey('settings')) || 'null') || makeDefaultSetup();
+
+  if (supabaseClient) {
+    try {
+      isOnline = true;
+      const { error } = await supabaseClient.from('app_users').upsert({
+        id: currentUser.id,
+        username,
+        display_name: currentUser.display_name,
+        password_hash: localUser.password_hash
+      });
+      if (error) throw error;
+      await saveInitialUserSetup();
+      await pushCachedDataToRemote();
+      setSync('online');
+    } catch (error) {
+      currentUser.localOnly = true;
+      markOffline(error, 'local user migration failed');
+    }
+  } else {
+    currentUser.localOnly = true;
+    isOnline = false;
+  }
+
+  await showMainApp();
+  return true;
 }
 
 async function tryLegacyLogin(username, password) {
@@ -2505,14 +2548,16 @@ async function loadUserSetup() {
 
 async function saveInitialUserSetup() {
   localStorage.setItem(getUserCacheKey('settings'), JSON.stringify(setup));
-  if (!(supabaseClient && isOnline && currentUser && !currentUser.localOnly)) return;
-  await supabaseClient.from('app_user_settings').upsert({
+  if (!canUseRemote()) return;
+  const { error } = await supabaseClient.from('app_user_settings').upsert({
     user_id: currentUser.id,
     start_date: setup.start_date || null,
     start_weight: setup.start_weight || null,
     goal_weight: setup.goal_weight || null,
     display_name: setup.display_name || currentUser.display_name || null
   });
+  if (error) throw error;
+  setSync('online');
 }
 
 async function showMainApp() {
@@ -2524,7 +2569,11 @@ async function showMainApp() {
   qs('goalWeight').value = setup.goal_weight || '';
   qs('displayNameSetting').value = setup.display_name || currentUser?.display_name || '';
 
-  if (isOnline) {
+  if (canUseRemote() && !currentUser.legacy) {
+    await verifyRemoteWrite();
+  }
+
+  if (isOnline && supabaseClient) {
     await loadAllData();
     localStorage.setItem(getUserCacheKey('data'), JSON.stringify(data));
     localStorage.setItem(getUserCacheKey('settings'), JSON.stringify(setup));
@@ -2542,6 +2591,53 @@ async function showMainApp() {
   qs('mainApp').classList.remove('hidden');
   bindSwipe();
   renderApp();
+}
+
+async function verifyRemoteWrite() {
+  if (!canUseRemote()) return false;
+  setSync('saving');
+  try {
+    const { error } = await supabaseClient.from('app_user_settings').upsert({
+      user_id: currentUser.id,
+      start_date: setup.start_date || null,
+      start_weight: setup.start_weight || null,
+      goal_weight: setup.goal_weight || null,
+      display_name: setup.display_name || currentUser.display_name || null
+    });
+    if (error) throw error;
+    setSync('online');
+    return true;
+  } catch (error) {
+    markOffline(error, 'verifyRemoteWrite failed');
+    return false;
+  }
+}
+
+function entryHasUserData(entry) {
+  if (!entry) return false;
+  return !!(
+    entry.morningWeight || entry.eveningWeight || entry.bodyFat ||
+    entry.weight || entry.exercise || entry.exType || entry.duration ||
+    entry.mood || entry.note
+  );
+}
+
+async function pushCachedDataToRemote() {
+  if (!canUseRemote()) return;
+  const cached = localStorage.getItem(getUserCacheKey('data')) || localStorage.getItem('cached_data');
+  if (!cached) return;
+
+  const cachedData = JSON.parse(cached);
+  data = cachedData || {};
+  seedMissingDates();
+  const rows = Object.keys(data)
+    .map(day => parseInt(day, 10))
+    .filter(day => Number.isFinite(day) && entryHasUserData(data[day]))
+    .map(day => buildRow(day));
+
+  if (!rows.length) return;
+  const { error } = await supabaseClient.from('app_checkin_records').upsert(rows);
+  if (error) throw error;
 }
 
 function seedMissingDates() {
@@ -3145,11 +3241,12 @@ async function saveCurrentDay() {
   localStorage.setItem(getUserCacheKey('data'), JSON.stringify(data));
   renderApp();
   await persistDay(selectedDay);
-  showToast('今天这张卡已保存');
+  showToast(isOnline ? '今天这张卡已同步保存' : '已保存到本地，线上同步失败');
 }
 
 async function persistDay(day) {
-  if (!(supabaseClient && isOnline)) return;
+  if (!canUseRemote() && !currentUser?.legacy) return;
+  if (!supabaseClient) return;
   setSync('saving');
   try {
     const row = buildRow(day);
@@ -3158,9 +3255,7 @@ async function persistDay(day) {
     if (error) throw error;
     setSync('online');
   } catch (error) {
-    console.error('persistDay failed', error);
-    setSync('offline');
-    isOnline = false;
+    markOffline(error, 'persistDay failed');
   }
 }
 
@@ -3201,7 +3296,7 @@ async function saveSetup() {
   seedMissingDates();
   renderApp();
 
-  if (!(supabaseClient && isOnline)) {
+  if (!supabaseClient || (!currentUser?.legacy && !canUseRemote())) {
     showToast('离线模式，设置已缓存到本地');
     return;
   }
@@ -3223,8 +3318,7 @@ async function saveSetup() {
     setSync('online');
     showToast('设置已保存');
   } catch (error) {
-    console.error('saveSetup failed', error);
-    setSync('offline');
+    markOffline(error, 'saveSetup failed');
     showToast('设置保存失败，已缓存到本地');
   }
 }
@@ -3252,6 +3346,7 @@ function setSync(state) {
   } else {
     text.textContent = '离线模式';
     dot.className = 'sync-dot offline';
+    isOnline = false;
   }
 }
 
@@ -3287,16 +3382,9 @@ function showToast(message) {
 }
 
 setInterval(async () => {
-  if (!isOnline && supabaseClient) {
-    try {
-      const table = currentUser?.legacy ? 'user_settings' : 'app_users';
-      const { error } = await supabaseClient.from(table).select('id').limit(1);
-      if (!error) {
-        isOnline = true;
-        setSync('online');
-        showToast('已重新连接');
-      }
-    } catch (error) {}
+  if (!isOnline && canUseRemote()) {
+    const ok = await verifyRemoteWrite();
+    if (ok) showToast('已重新连接');
   }
 }, 30000);
 
