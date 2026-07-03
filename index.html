@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>减肥100天打卡</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 12px; }
+.container { max-width: 1100px; margin: 0 auto; }
+
+/* === 登录页 === */
+.login-screen { display: flex; justify-content: center; align-items: center; min-height: 90vh; }
+.login-box { background: #fff; border-radius: 16px; padding: 36px 32px; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
+.login-box h2 { color: #764ba2; margin-bottom: 6px; font-size: 1.4rem; }
+.login-box p { color: #999; font-size: 0.85rem; margin-bottom: 24px; }
+.login-box input { width: 100%; border: 2px solid #e0e0e0; border-radius: 8px; padding: 12px 14px; font-size: 1rem; text-align: center; outline: none; margin-bottom: 12px; }
+.login-box input:focus { border-color: #764ba2; }
+.login-box button { width: 100%; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+.login-box button:hover { opacity: 0.9; }
+.login-error { color: #e74c3c; font-size: 0.8rem; margin-top: 8px; display: none; }
+
+/* === 头部 === */
+.header { text-align: center; color: #fff; margin-bottom: 16px; }
+.header h1 { font-size: 1.6rem; margin-bottom: 4px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.header .subtitle { font-size: 0.85rem; opacity: 0.8; }
+
+/* === 统计卡片 === */
+.stats-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.stat-card { flex: 1; min-width: 100px; background: #fff; border-radius: 10px; padding: 12px; box-shadow: 0 3px 12px rgba(0,0,0,0.1); text-align: center; }
+.stat-card .label { font-size: 0.72rem; color: #888; margin-bottom: 2px; }
+.stat-card .value { font-size: 1.3rem; font-weight: 700; color: #333; }
+.stat-card .value.green { color: #2ecc71; } .stat-card .value.red { color: #e74c3c; } .stat-card .value.blue { color: #3498db; }
+.stat-card .unit { font-size: 0.75rem; font-weight: 400; color: #aaa; }
+
+/* === 设置栏 === */
+.setup-bar { background: #fff; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; box-shadow: 0 3px 12px rgba(0,0,0,0.1); }
+.setup-bar label { font-size: 0.8rem; color: #555; font-weight: 600; white-space: nowrap; }
+.setup-bar input { border: 2px solid #e0e0e0; border-radius: 6px; padding: 5px 8px; font-size: 0.85rem; outline: none; }
+.setup-bar input:focus { border-color: #764ba2; }
+.setup-bar .sw { width: 80px; }
+.btn { cursor: pointer; border: none; border-radius: 6px; padding: 6px 14px; font-size: 0.8rem; font-weight: 600; }
+.btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; }
+.btn-secondary { background: #f0f0f0; color: #555; }
+.btn:hover { opacity: 0.88; }
+
+/* === 进度条 === */
+.overall-progress { background: #fff; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; box-shadow: 0 3px 12px rgba(0,0,0,0.1); }
+.progress-bar-c { width: 100%; height: 20px; background: #f0f0f0; border-radius: 10px; overflow: hidden; margin-top: 6px; }
+.progress-bar-f { height: 100%; background: linear-gradient(90deg, #2ecc71, #27ae60); border-radius: 10px; transition: width 0.4s; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: #fff; font-size: 0.75rem; font-weight: 600; }
+.progress-label { font-size: 0.8rem; color: #555; font-weight: 600; }
+
+/* === 表格 === */
+.table-wrapper { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.12); overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 860px; }
+thead th { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; padding: 10px 6px; font-weight: 600; text-align: center; position: sticky; top: 0; z-index: 10; }
+thead th:first-child { width: 48px; }
+tbody tr { border-bottom: 1px solid #f0f0f0; }
+tbody tr:hover { background: #f8f7ff; }
+tbody tr.week-end { border-bottom: 2px solid #764ba2; }
+tbody tr.week-sum { background: #f0edff; font-weight: 600; }
+tbody tr.week-sum td { padding: 6px; text-align: center; color: #555; font-size: 0.75rem; }
+tbody td { padding: 5px 6px; text-align: center; }
+.day-num { font-weight: 700; color: #764ba2; }
+tbody input, tbody select { width: 100%; border: 1.5px solid #e8e8e8; border-radius: 5px; padding: 3px 5px; font-size: 0.78rem; text-align: center; outline: none; }
+tbody input:focus, tbody select:focus { border-color: #764ba2; }
+.wc { font-weight: 600; font-size: 0.75rem; } .wc.pos { color: #e74c3c; } .wc.neg { color: #2ecc71; } .wc.zero { color: #aaa; }
+.ex-check { display: inline-block; width: 26px; height: 26px; line-height: 26px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; user-select: none; border: 2px solid #ddd; background: #fafafa; color: #ccc; }
+.ex-check.checked { background: #2ecc71; border-color: #27ae60; color: #fff; }
+.week-dots { display: flex; gap: 3px; justify-content: center; align-items: center; }
+.wd { width: 10px; height: 10px; border-radius: 50%; background: #e0e0e0; } .wd.f { background: #2ecc71; }
+
+/* === 底部 === */
+.footer { text-align: center; color: rgba(255,255,255,0.7); font-size: 0.75rem; margin-top: 14px; }
+.footer .tip { background: rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 16px; display: inline-block; }
+
+/* === Toast === */
+.toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: #fff; padding: 8px 22px; border-radius: 8px; font-size: 0.85rem; z-index: 9999; transition: opacity 0.3s; }
+
+/* === Loading === */
+.loading-screen { display: flex; justify-content: center; align-items: center; min-height: 90vh; color: #fff; font-size: 1rem; }
+
+/* === Sync indicator === */
+.sync-bar { background: rgba(255,255,255,0.15); border-radius: 8px; padding: 6px 12px; margin-bottom: 10px; text-align: right; }
+.sync-bar .sync-status { color: rgba(255,255,255,0.8); font-size: 0.75rem; }
+.sync-bar .sync-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-left: 4px; }
+.sync-dot.online { background: #2ecc71; } .sync-dot.saving { background: #f39c12; } .sync-dot.offline { background: #e74c3c; }
+
+/* 移动端 */
+@media (max-width: 600px) {
+  .header h1 { font-size: 1.3rem; } .stat-card { min-width: 85px; padding: 8px; } .stat-card .value { font-size: 1rem; }
+  .stat-card .label { font-size: 0.65rem; } table { font-size: 0.72rem; } thead th, tbody td { padding: 3px 2px; }
+  .setup-bar { gap: 6px; padding: 8px; } .setup-bar label { font-size: 0.72rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== 登录页 ==================== -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <h2>💪 减肥100天打卡</h2>
+    <p>请输入访问密码</p>
+    <input type="password" id="loginPwd" placeholder="输入密码" onkeypress="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()">进入</button>
+    <div id="loginError" class="login-error">密码错误，请重试</div>
+  </div>
+</div>
+
+<!-- ==================== Loading ==================== -->
+<div id="loadingScreen" class="loading-screen" style="display:none">
+  <div>⏳ 正在加载数据...</div>
+</div>
+
+<!-- ==================== 主界面 ==================== -->
+<div id="mainApp" class="container" style="display:none">
+
+  <div class="header">
+    <h1>💪 减肥100天打卡挑战</h1>
+    <div class="subtitle">坚持100天，遇见更好的自己</div>
+  </div>
+
+  <!-- 同步状态 -->
+  <div class="sync-bar">
+    <span class="sync-status" id="syncText">已连接 <span class="sync-dot online" id="syncDot"></span></span>
+  </div>
+
+  <!-- 设置栏 -->
+  <div class="setup-bar">
+    <div><label>开始日期</label><br><input type="date" id="startDate"></div>
+    <div><label>起始体重</label><br><input type="number" class="sw" id="startWeight" step="0.1" placeholder="kg"></div>
+    <div><label>目标体重</label><br><input type="number" class="sw" id="goalWeight" step="0.1" placeholder="kg"></div>
+    <div><label>访问密码</label><br><input type="text" class="sw" id="accessPwd" placeholder="改密码"></div>
+    <button class="btn btn-primary" onclick="saveSetup()">保存</button>
+    <button class="btn btn-secondary" onclick="logout()">退出</button>
+  </div>
+
+  <!-- 统计卡片 -->
+  <div class="stats-row">
+    <div class="stat-card"><div class="label">当前体重</div><div class="value blue" id="currentWeight">— <span class="unit">kg</span></div></div>
+    <div class="stat-card"><div class="label">累计减重</div><div class="value green" id="totalLoss">— <span class="unit">kg</span></div></div>
+    <div class="stat-card"><div class="label">运动天数</div><div class="value green" id="exerciseDays">0<span class="unit">天</span></div></div>
+    <div class="stat-card"><div class="label">坚持天数</div><div class="value" id="totalDays">0<span class="unit">/100</span></div></div>
+    <div class="stat-card"><div class="label">距目标</div><div class="value red" id="toGoal">— <span class="unit">kg</span></div></div>
+  </div>
+
+  <!-- 进度条 -->
+  <div class="overall-progress">
+    <span class="progress-label">📊 完成进度</span>
+    <div class="progress-bar-c"><div class="progress-bar-f" id="progressBar" style="width:0%">0%</div></div>
+  </div>
+
+  <!-- 打卡表格 -->
+  <div class="table-wrapper">
+    <table>
+      <thead><tr>
+        <th>天数</th><th>日期</th><th>体重</th><th>较起始</th><th>较昨日</th>
+        <th>运动</th><th>类型</th><th>时长</th><th>状态</th><th>备注</th>
+      </tr></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    <div class="tip">💡 数据云端同步，手机电脑随时访问 | 密码在设置栏修改</div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// 配置区 —— 部署后把下面两个值替换成你的 Supabase 信息
+// ============================================================
+const SUPABASE_URL = 'https://pslbbosqjyecaejtdwhh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzbGJib3NxanllY2FlanRkd2hoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwNDY5NTMsImV4cCI6MjA5ODYyMjk1M30.2oFh0q9Q4_dOQAlLi6mLOwWzX0Kc0pYLpXE-wZ-MzWo';
+
+const TOTAL_DAYS = 100;
+const exerciseTypes = ['跑步','快走','跳绳','骑行','游泳','健身操','力量训练','瑜伽','HIIT','爬山','球类','其他'];
+const moods = [
+  {val:'',icon:'⚪'},{val:'great',icon:'😄'},{val:'good',icon:'🙂'},
+  {val:'ok',icon:'😐'},{val:'tired',icon:'😮‍💨'},{val:'bad',icon:'😣'}
+];
+
+let supabaseClient = null;
+let data = {};       // {1: {weight, exercise, exType, duration, mood, note, date}, ...}
+let setup = {};      // {startDate, startWeight, goalWeight, accessPassword}
+let isOnline = true;
+
+// === 初始化 Supabase ===
+function initSupabase() {
+  if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+    alert('请先配置 Supabase URL 和 Key！看部署指南。');
+    return false;
+  }
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  return true;
+}
+
+// === 登录 ===
+async function doLogin() {
+  const pwd = document.getElementById('loginPwd').value;
+  if (!pwd) return;
+
+  document.getElementById('loginError').style.display = 'none';
+  if (!initSupabase()) return;
+
+  // 从数据库获取密码
+  try {
+    const { data: settings, error } = await supabaseClient
+      .from('user_settings').select('*').eq('id', 1).single();
+
+    if (error) {
+      // 表可能为空，用默认密码
+      if (pwd === '123456') {
+        setup = { accessPassword: '123456' };
+        showMainApp();
+        return;
+      }
+      document.getElementById('loginError').style.display = 'block';
+      return;
+    }
+
+    const dbPwd = settings.access_password || '123456';
+    if (pwd === dbPwd) {
+      setup = settings;
+      showMainApp();
+    } else {
+      document.getElementById('loginError').style.display = 'block';
+    }
+  } catch(e) {
+    // 网络错误，尝试本地缓存
+    const cached = localStorage.getItem('cached_settings');
+    if (cached) {
+      const s = JSON.parse(cached);
+      if (pwd === (s.access_password || '123456')) {
+        setup = s;
+        isOnline = false;
+        showMainApp();
+        return;
+      }
+    }
+    document.getElementById('loginError').textContent = '连接失败，请检查网络';
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+
+// === 显示主界面 ===
+async function showMainApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('loadingScreen').style.display = 'flex';
+
+  // 填充设置
+  document.getElementById('startDate').value = setup.start_date || new Date().toISOString().slice(0,10);
+  document.getElementById('startWeight').value = setup.start_weight || '';
+  document.getElementById('goalWeight').value = setup.goal_weight || '';
+  document.getElementById('accessPwd').value = setup.access_password || '123456';
+
+  // 加载打卡数据
+  if (isOnline) {
+    await loadAllData();
+    // 缓存到本地（离线备用）
+    localStorage.setItem('cached_data', JSON.stringify(data));
+    localStorage.setItem('cached_settings', JSON.stringify(setup));
+  } else {
+    // 离线模式用缓存
+    const cached = localStorage.getItem('cached_data');
+    if (cached) data = JSON.parse(cached);
+  }
+
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+  renderTable();
+  updateStats();
+}
+
+// === 加载所有数据 ===
+async function loadAllData() {
+  try {
+    const { data: records, error } = await supabaseClient
+      .from('checkin_records').select('*');
+
+    if (error) throw error;
+
+    data = {};
+    if (records) {
+      for (const r of records) {
+        data[r.day] = {
+          date: r.record_date || '',
+          weight: r.weight || '',
+          exercise: r.exercise || false,
+          exType: r.exercise_type || '',
+          duration: r.duration || '',
+          mood: r.mood || '',
+          note: r.note || ''
+        };
+      }
+    }
+  } catch(e) {
+    console.error('Load error:', e);
+    showToast('⚠️ 加载数据失败，使用本地缓存');
+    isOnline = false;
+    updateSyncStatus();
+    const cached = localStorage.getItem('cached_data');
+    if (cached) data = JSON.parse(cached);
+  }
+}
+
+// === 保存设置 ===
+async function saveSetup() {
+  const newSetup = {
+    id: 1,
+    start_date: document.getElementById('startDate').value || null,
+    start_weight: parseFloat(document.getElementById('startWeight').value) || null,
+    goal_weight: parseFloat(document.getElementById('goalWeight').value) || null,
+    access_password: document.getElementById('accessPwd').value || '123456'
+  };
+
+  Object.assign(setup, newSetup);
+  localStorage.setItem('cached_settings', JSON.stringify(setup));
+
+  if (supabaseClient && isOnline) {
+    setSync('saving');
+    try {
+      const { error } = await supabaseClient
+        .from('user_settings').upsert(newSetup);
+      if (error) throw error;
+      setSync('online');
+      showToast('设置已保存 ✅');
+    } catch(e) {
+      setSync('offline');
+      showToast('⚠️ 保存失败，已缓存本地');
+    }
+  } else {
+    showToast('离线模式，已缓存本地');
+  }
+
+  renderTable();
+  updateStats();
+}
+
+// === 更新单条记录 ===
+async function updateField(day, field, value) {
+  if (!data[day]) data[day] = {};
+  data[day][field] = value;
+
+  // 日期同步
+  if (field === 'date') {
+    data[day].date = value;
+  }
+
+  // 本地缓存
+  localStorage.setItem('cached_data', JSON.stringify(data));
+
+  // 同步到 Supabase
+  if (supabaseClient && isOnline) {
+    setSync('saving');
+    try {
+      const row = buildRow(day);
+      const { error } = await supabaseClient
+        .from('checkin_records').upsert(row);
+      if (error) throw error;
+      setSync('online');
+    } catch(e) {
+      setSync('offline');
+      isOnline = false;
+    }
+  }
+
+  calculateChanges();
+  updateStats();
+}
+
+// === 切换运动状态 ===
+async function toggleExercise(day) {
+  if (!data[day]) data[day] = {};
+  data[day].exercise = !data[day].exercise;
+
+  localStorage.setItem('cached_data', JSON.stringify(data));
+
+  const el = document.getElementById('ex-check-' + day);
+  if (data[day].exercise) { el.classList.add('checked'); el.textContent = '✓'; }
+  else { el.classList.remove('checked'); el.textContent = ''; }
+
+  if (supabaseClient && isOnline) {
+    setSync('saving');
+    try {
+      const row = buildRow(day);
+      const { error } = await supabaseClient.from('checkin_records').upsert(row);
+      if (error) throw error;
+      setSync('online');
+    } catch(e) { setSync('offline'); isOnline = false; }
+  }
+
+  calculateChanges();
+  updateStats();
+}
+
+// === 构建数据库行 ===
+function buildRow(day) {
+  const entry = data[day] || {};
+  let dateStr = entry.date || getDateForDay(day);
+  if (dateStr && dateStr.length >= 10) dateStr = dateStr.slice(0, 10);
+
+  return {
+    day: day,
+    record_date: dateStr || null,
+    weight: entry.weight ? parseFloat(entry.weight) : null,
+    exercise: entry.exercise || false,
+    exercise_type: entry.exType || null,
+    duration: entry.duration ? parseInt(entry.duration) : null,
+    mood: entry.mood || null,
+    note: entry.note || null
+  };
+}
+
+// === 日期计算 ===
+function getDateForDay(day) {
+  if (!setup.start_date) return '';
+  const start = new Date(setup.start_date);
+  const d = new Date(start);
+  d.setDate(d.getDate() + day - 1);
+  return d.toISOString().slice(0, 10);
+}
+
+function getDayOfWeek(dateStr) {
+  if (!dateStr) return '';
+  const days = ['日','一','二','三','四','五','六'];
+  return '周' + days[new Date(dateStr).getDay()];
+}
+
+// === 渲染表格 ===
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  let html = '';
+
+  for (let day = 1; day <= TOTAL_DAYS; day++) {
+    const entry = data[day] || {};
+    const dateStr = entry.date || getDateForDay(day);
+    const dow = getDayOfWeek(dateStr);
+    const isWeekEnd = (day % 7 === 0);
+
+    html += `<tr class="${isWeekEnd ? 'week-end' : ''}">
+      <td class="day-num">${day}</td>
+      <td><input type="date" value="${dateStr}" onchange="updateField(${day},'date',this.value)" style="font-size:0.72rem;width:110px">
+        <div style="font-size:0.68rem;color:#999">${dow}</div></td>
+      <td><input type="number" step="0.1" placeholder="—" value="${entry.weight || ''}" onchange="updateField(${day},'weight',this.value)"></td>
+      <td id="cs-${day}" class="wc"></td>
+      <td id="cp-${day}" class="wc"></td>
+      <td><span class="ex-check ${entry.exercise ? 'checked' : ''}" id="ex-check-${day}" onclick="toggleExercise(${day})">${entry.exercise ? '✓' : ''}</span></td>
+      <td><select onchange="updateField(${day},'exType',this.value)"><option value="">—</option>${exerciseTypes.map(t=>`<option ${entry.exType===t?'selected':''}>${t}</option>`).join('')}</select></td>
+      <td><input type="number" step="5" placeholder="—" value="${entry.duration || ''}" onchange="updateField(${day},'duration',this.value)" style="width:55px"></td>
+      <td><select onchange="updateField(${day},'mood',this.value)">${moods.map(m=>`<option value="${m.val}" ${entry.mood===m.val?'selected':''}>${m.icon}</option>`).join('')}</select></td>
+      <td><input type="text" placeholder="备注" value="${entry.note || ''}" onchange="updateField(${day},'note',this.value)" style="width:80px"></td>
+    </tr>`;
+
+    if (isWeekEnd) {
+      const wn = Math.floor(day / 7);
+      html += `<tr class="week-sum"><td colspan="3">📋 第${wn}周小结</td>
+        <td id="wa-${day}"></td><td id="wc-${day}"></td>
+        <td id="we-${day}"></td><td id="wt-${day}"></td><td id="wd-${day}"></td>
+        <td colspan="2" id="wp-${day}"></td></tr>`;
+    }
+  }
+
+  tbody.innerHTML = html;
+  calculateChanges();
+}
+
+// === 计算变化 ===
+function calculateChanges() {
+  const startW = setup.start_weight ? parseFloat(setup.start_weight) : null;
+  let prevW = startW;
+
+  for (let day = 1; day <= TOTAL_DAYS; day++) {
+    const entry = data[day] || {};
+    const weight = entry.weight ? parseFloat(entry.weight) : null;
+
+    const csEl = document.getElementById('cs-' + day);
+    if (csEl) {
+      if (startW && weight) {
+        const diff = weight - startW;
+        csEl.textContent = (diff > 0 ? '+' : '') + diff.toFixed(1);
+        csEl.className = 'wc ' + (diff > 0 ? 'pos' : diff < 0 ? 'neg' : 'zero');
+      } else csEl.textContent = '';
+    }
+
+    const cpEl = document.getElementById('cp-' + day);
+    if (cpEl) {
+      if (prevW && weight) {
+        const diff = weight - prevW;
+        cpEl.textContent = (diff > 0 ? '+' : '') + diff.toFixed(1);
+        cpEl.className = 'wc ' + (diff > 0 ? 'pos' : diff < 0 ? 'neg' : 'zero');
+      } else cpEl.textContent = '';
+    }
+
+    if (weight) prevW = weight;
+
+    if (day % 7 === 0) renderWeekSummary(day);
+  }
+}
+
+// === 周小结 ===
+function renderWeekSummary(day) {
+  const ws = day - 6;
+  let weights = [], exCount = 0, exTypes = [], totalDur = 0, filled = 0;
+
+  for (let d = ws; d <= day; d++) {
+    const e = data[d] || {};
+    if (e.weight) weights.push(parseFloat(e.weight));
+    if (e.exercise) exCount++;
+    if (e.exType) exTypes.push(e.exType);
+    if (e.duration) totalDur += parseInt(e.duration);
+    if (e.weight || e.exercise) filled++;
+  }
+
+  const setEl = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+
+  if (weights.length > 0 && setup.start_weight) {
+    const avg = weights.reduce((a,b)=>a+b,0) / weights.length;
+    const diff = avg - parseFloat(setup.start_weight);
+    setEl('wa-' + day, `均${avg.toFixed(1)} <span style="color:${diff>0?'#e74c3c':'#2ecc71'}">${diff>0?'+':''}${diff.toFixed(1)}</span>`);
+  }
+
+  if (weights.length >= 2) {
+    const diff = weights[weights.length-1] - weights[0];
+    setEl('wc-' + day, `<span style="color:${diff>0?'#e74c3c':'#2ecc71'}">${diff>0?'+':''}${diff.toFixed(1)}</span>`);
+  }
+
+  setEl('we-' + day, `${exCount}<span style="color:#aaa;font-size:0.7rem">/7</span>`);
+
+  const uniq = [...new Set(exTypes)];
+  setEl('wt-' + day, uniq.length ? uniq.join('/') : '—');
+
+  setEl('wd-' + day, totalDur > 0 ? `${totalDur}<span style="color:#aaa;font-size:0.7rem">分</span>` : '—');
+
+  let dots = '', df = 0;
+  for (let d = ws; d <= day; d++) {
+    const e = data[d] || {};
+    const f = e.weight || e.exercise;
+    if (f) df++;
+    dots += `<span class="wd ${f ? 'f' : ''}"></span>`;
+  }
+  setEl('wp-' + day, `<div class="week-dots">${dots}<span style="margin-left:4px;font-size:0.7rem;color:#888">${df}/7</span></div>`);
+}
+
+// === 统计 ===
+function updateStats() {
+  let curW = null, exDays = 0, filledDays = 0;
+
+  for (let day = 1; day <= TOTAL_DAYS; day++) {
+    const e = data[day] || {};
+    if (e.weight) { curW = parseFloat(e.weight); filledDays = Math.max(filledDays, day); }
+    if (e.exercise) exDays++;
+  }
+
+  const startW = setup.start_weight ? parseFloat(setup.start_weight) : null;
+  const goalW = setup.goal_weight ? parseFloat(setup.goal_weight) : null;
+
+  document.getElementById('currentWeight').innerHTML = curW ? `${curW.toFixed(1)} <span class="unit">kg</span>` : '— <span class="unit">kg</span>';
+
+  const tlEl = document.getElementById('totalLoss');
+  if (startW && curW) {
+    const loss = startW - curW;
+    tlEl.innerHTML = `${loss > 0 ? '-' : '+'}${Math.abs(loss).toFixed(1)} <span class="unit">kg</span>`;
+    tlEl.className = 'value ' + (loss > 0 ? 'green' : 'red');
+  } else tlEl.innerHTML = '— <span class="unit">kg</span>';
+
+  document.getElementById('exerciseDays').innerHTML = `${exDays}<span class="unit">天</span>`;
+  document.getElementById('totalDays').innerHTML = `${filledDays}<span class="unit">/100</span>`;
+
+  const tgEl = document.getElementById('toGoal');
+  if (goalW && curW) {
+    const diff = curW - goalW;
+    if (diff <= 0) { tgEl.innerHTML = '已达标!'; tgEl.className = 'value green'; }
+    else { tgEl.innerHTML = `${diff.toFixed(1)} <span class="unit">kg</span>`; tgEl.className = 'value red'; }
+  } else tgEl.innerHTML = '— <span class="unit">kg</span>';
+
+  const pct = Math.round((filledDays / TOTAL_DAYS) * 100);
+  const bar = document.getElementById('progressBar');
+  bar.style.width = pct + '%';
+  bar.textContent = pct + '%';
+}
+
+// === 同步状态 ===
+function setSync(state) {
+  const dot = document.getElementById('syncDot');
+  const text = document.getElementById('syncText');
+  if (state === 'saving') { dot.className = 'sync-dot saving'; text.innerHTML = '保存中... '; }
+  else if (state === 'online') { dot.className = 'sync-dot online'; text.innerHTML = '已连接云端 '; isOnline = true; }
+  else if (state === 'offline') { dot.className = 'sync-dot offline'; text.innerHTML = '离线模式(本地缓存) '; }
+}
+
+function updateSyncStatus() {
+  if (isOnline) setSync('online'); else setSync('offline');
+}
+
+// === 退出 ===
+function logout() {
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginPwd').value = '';
+  data = {}; setup = {};
+}
+
+// === Toast ===
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.style.opacity = '0', 2000);
+  setTimeout(() => t.remove(), 2400);
+}
+
+// === 定时尝试重连 ===
+setInterval(async () => {
+  if (!isOnline && supabaseClient) {
+    try {
+      const { error } = await supabaseClient.from('user_settings').select('id').limit(1);
+      if (!error) { isOnline = true; setSync('online'); showToast('已重新连接'); }
+    } catch(e) {}
+  }
+}, 30000);
+</script>
+</body>
+</html>
