@@ -52,6 +52,19 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
 .progress-bar-f { height: 100%; background: linear-gradient(90deg, #38a169, #2f855a); border-radius: 999px; transition: width 0.4s; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: #fff; font-size: 0.72rem; font-weight: 700; }
 .progress-label { font-size: 0.82rem; color: #445166; font-weight: 700; }
 
+/* === 趋势图 === */
+.trend-card { background: #fff; border: 1px solid #d9e2ec; border-radius: 14px; padding: 14px; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04); }
+.trend-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+.trend-title { font-size: 0.82rem; color: #445166; font-weight: 700; }
+.trend-meta { font-size: 0.76rem; color: #7a8798; }
+.trend-svg { display: block; width: 100%; height: 180px; }
+.trend-grid { stroke: #e6edf3; stroke-width: 1; }
+.trend-area { fill: rgba(56, 161, 105, 0.12); }
+.trend-line { fill: none; stroke: #2f855a; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.trend-dot { fill: #2f855a; }
+.trend-empty { height: 180px; display: flex; align-items: center; justify-content: center; color: #8a94a6; font-size: 0.86rem; background: linear-gradient(180deg, #fbfcfd, #f5f8fa); border-radius: 10px; }
+.trend-axis { display: flex; justify-content: space-between; margin-top: 6px; color: #8a94a6; font-size: 0.72rem; }
+
 /* === 表格 === */
 .table-wrapper { background: #fff; border: 1px solid #d9e2ec; border-radius: 14px; overflow: auto; box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05); }
 table { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 980px; }
@@ -167,6 +180,18 @@ tbody input:focus, tbody select:focus { border-color: #2f855a; box-shadow: 0 0 0
   <div class="overall-progress">
     <span class="progress-label">📊 完成进度</span>
     <div class="progress-bar-c"><div class="progress-bar-f" id="progressBar" style="width:0%">0%</div></div>
+  </div>
+
+  <div class="trend-card">
+    <div class="trend-head">
+      <div class="trend-title">📉 体重趋势</div>
+      <div class="trend-meta" id="trendMeta">还没有足够的数据</div>
+    </div>
+    <div id="trendChart"></div>
+    <div class="trend-axis">
+      <span>起点</span>
+      <span>最近记录</span>
+    </div>
   </div>
 
   <!-- 打卡表格 -->
@@ -451,6 +476,16 @@ function isToday(dateStr) {
   return dateStr === new Date().toISOString().slice(0, 10);
 }
 
+function getWeightSeries() {
+  const series = [];
+  for (let day = 1; day <= TOTAL_DAYS; day++) {
+    const entry = data[day] || {};
+    const weight = entry.weight ? parseFloat(entry.weight) : null;
+    if (weight) series.push({ day, weight });
+  }
+  return series;
+}
+
 // === 渲染表格 ===
 function renderTable() {
   const tbody = document.getElementById('tableBody');
@@ -566,6 +601,55 @@ function renderWeekSummary(day) {
   setEl('wp-' + day, `<div class="week-dots">${dots}<span style="margin-left:4px;font-size:0.7rem;color:#888">${df}/7</span></div>`);
 }
 
+function renderWeightTrend() {
+  const chartEl = document.getElementById('trendChart');
+  const metaEl = document.getElementById('trendMeta');
+  const series = getWeightSeries();
+
+  if (series.length < 2) {
+    chartEl.innerHTML = '<div class="trend-empty">先录入至少 2 次体重，这里就会自动生成趋势图</div>';
+    metaEl.textContent = series.length === 1 ? `目前只有 1 条体重记录` : '还没有足够的数据';
+    return;
+  }
+
+  const weights = series.map(item => item.weight);
+  const minW = Math.min(...weights);
+  const maxW = Math.max(...weights);
+  const range = Math.max(maxW - minW, 0.8);
+  const width = 720;
+  const height = 180;
+  const padX = 18;
+  const padY = 18;
+  const innerW = width - padX * 2;
+  const innerH = height - padY * 2;
+
+  const points = series.map((item, index) => {
+    const x = padX + (series.length === 1 ? innerW / 2 : (index / (series.length - 1)) * innerW);
+    const y = padY + ((maxW - item.weight) / range) * innerH;
+    return { x, y, ...item };
+  });
+
+  const linePath = points.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+  const areaPath = `${linePath} L ${points[points.length - 1].x.toFixed(1)} ${(height - padY).toFixed(1)} L ${points[0].x.toFixed(1)} ${(height - padY).toFixed(1)} Z`;
+  const first = series[0].weight;
+  const last = series[series.length - 1].weight;
+  const diff = last - first;
+  const color = diff <= 0 ? '#2f855a' : '#e76f51';
+
+  chartEl.innerHTML = `
+    <svg class="trend-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="体重趋势图">
+      <line class="trend-grid" x1="${padX}" y1="${padY}" x2="${width - padX}" y2="${padY}"></line>
+      <line class="trend-grid" x1="${padX}" y1="${height / 2}" x2="${width - padX}" y2="${height / 2}"></line>
+      <line class="trend-grid" x1="${padX}" y1="${height - padY}" x2="${width - padX}" y2="${height - padY}"></line>
+      <path class="trend-area" d="${areaPath}"></path>
+      <path class="trend-line" d="${linePath}" style="stroke:${color}"></path>
+      ${points.map((p, idx) => `<circle class="trend-dot" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${idx === points.length - 1 ? 4.5 : 3.2}" style="fill:${color}"></circle>`).join('')}
+    </svg>
+  `;
+
+  metaEl.innerHTML = `最近 ${series.length} 次记录 ${diff === 0 ? '持平' : (diff < 0 ? `下降 ${Math.abs(diff).toFixed(1)} kg` : `上升 ${diff.toFixed(1)} kg`)}`;
+}
+
 // === 统计 ===
 function updateStats() {
   let curW = null, exDays = 0, filledDays = 0;
@@ -602,6 +686,7 @@ function updateStats() {
   const bar = document.getElementById('progressBar');
   bar.style.width = pct + '%';
   bar.textContent = pct + '%';
+  renderWeightTrend();
 }
 
 // === 同步状态 ===
