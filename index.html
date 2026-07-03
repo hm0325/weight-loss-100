@@ -68,6 +68,27 @@ body {
   transition: background 0.5s ease;
 }
 
+html {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--mood-accent), #fff 18%) rgba(255,255,255,0.08);
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--mood-accent), #fff 44%), color-mix(in srgb, var(--mood-accent), #000 8%));
+  border: 1px solid rgba(255,255,255,0.14);
+}
+
 body::before,
 body::after {
   content: "";
@@ -120,7 +141,7 @@ body::after {
 .ambient-cat {
   position: fixed;
   right: clamp(18px, 5vw, 72px);
-  top: clamp(78px, 12vh, 132px);
+  top: clamp(48px, 8vh, 98px);
   width: 128px;
   height: 128px;
   z-index: 0;
@@ -947,6 +968,16 @@ body::after {
   -webkit-appearance: none;
 }
 
+.field input[type="number"]::-webkit-outer-spin-button,
+.field input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.field input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 .field textarea { min-height: 42px; }
 
 .field textarea {
@@ -980,34 +1011,131 @@ body::after {
   box-shadow: 0 0 0 3px var(--mood-accent-soft), inset 0 1px 0 rgba(255,255,255,0.14);
 }
 
-.date-field {
+.date-display-field {
   position: relative;
 }
 
-.date-field::after {
-  content: "⌁";
-  position: absolute;
-  right: 18px;
-  bottom: 16px;
-  width: 24px;
-  height: 24px;
+.today-date-pill {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 14px;
+  border-radius: 16px;
+  color: #fff9f2;
+  font-size: 0.96rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255,255,255,0.26), transparent 30%),
+    linear-gradient(135deg, color-mix(in srgb, var(--mood-accent), #fff 42%), color-mix(in srgb, var(--mood-accent), #000 12%));
+  border: 1px solid color-mix(in srgb, var(--mood-accent), #fff 34%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.22),
+    0 14px 28px var(--mood-accent-soft);
+}
+
+.today-date-pill::after {
+  content: "今日";
+  flex: 0 0 auto;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: rgba(38, 26, 22, 0.92);
+  background: rgba(255,255,255,0.72);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35);
+}
+
+.custom-select {
+  position: relative;
+}
+
+.custom-select-trigger {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid color-mix(in srgb, var(--mood-accent), #fff 16%);
+  background:
+    radial-gradient(circle at 86% 18%, rgba(255,255,255,0.18), transparent 18%),
+    linear-gradient(145deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08));
+  color: var(--ink);
+  border-radius: 16px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+.custom-select.open .custom-select-trigger {
+  border-color: color-mix(in srgb, var(--mood-accent), #fff 28%);
+  box-shadow: 0 0 0 3px var(--mood-accent-soft), inset 0 1px 0 rgba(255,255,255,0.14);
+}
+
+.custom-select-trigger strong {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  color: var(--dark-text);
-  background: linear-gradient(135deg, color-mix(in srgb, var(--mood-accent), #fff 58%), var(--mood-accent));
-  box-shadow: 0 10px 20px var(--mood-accent-soft);
-  pointer-events: none;
-  font-weight: 900;
+  font-size: 0.88rem;
+  color: rgba(35, 24, 22, 0.92);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--mood-accent), #fff 60%), color-mix(in srgb, var(--mood-accent), #000 4%));
+  box-shadow: 0 8px 18px var(--mood-accent-soft);
+  transition: transform 0.22s ease;
 }
 
-.date-field input {
-  min-height: 44px;
-  padding-right: 42px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color-scheme: dark;
-  cursor: pointer;
+.custom-select.open .custom-select-trigger strong {
+  transform: rotate(180deg);
+}
+
+.custom-select-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 40;
+  padding: 8px;
+  display: none;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background:
+    linear-gradient(180deg, rgba(63,54,89,0.96), rgba(48,41,70,0.96)),
+    rgba(24,20,38,0.9);
+  backdrop-filter: blur(22px) saturate(135%);
+  box-shadow: 0 22px 46px rgba(20, 17, 36, 0.42);
+  max-height: 220px;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.custom-select.open .custom-select-menu {
+  display: grid;
+  gap: 6px;
+}
+
+.custom-select-option {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  min-height: 40px;
+  padding: 0 12px;
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,248,243,0.92);
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.custom-select-option.active {
+  color: rgba(40, 26, 22, 0.95);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--mood-accent), #fff 42%), color-mix(in srgb, var(--mood-accent), #000 6%));
+  box-shadow: 0 10px 24px var(--mood-accent-soft);
 }
 
 .field.full { grid-column: 1 / -1; }
@@ -1029,14 +1157,17 @@ body::after {
 }
 
 .choice {
-  padding: 7px 6px;
-  border-radius: 8px;
+  min-height: 46px;
+  padding: 6px 4px;
+  border-radius: 14px;
   text-align: center;
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.1);
   cursor: pointer;
-  font-size: 0.86rem;
-  transition: transform 0.16s ease, border-color 0.16s ease;
+  font-size: 1.06rem;
+  display: grid;
+  place-items: center;
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
 }
 
 .choice.active {
@@ -1044,6 +1175,12 @@ body::after {
   background: linear-gradient(135deg, var(--warm-a), var(--warm-b));
   border-color: transparent;
   box-shadow: 0 12px 24px rgba(255, 194, 141, 0.26);
+}
+
+.choice .mood-emoji {
+  font-size: 1.18rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.16));
 }
 
 .exercise-toggle {
@@ -1562,8 +1699,8 @@ body::after {
   body { padding: 0; }
   body::before { width: 70vw; height: 70vw; left: -30vw; top: -28vw; }
   body::after { width: 74vw; height: 74vw; right: -34vw; bottom: -28vw; }
-  .ambient-cat { width: 82px; height: 82px; right: 10px; top: 74px; opacity: 0.18; }
-  .app-cat { width: 82px; right: 8px; top: 62px; opacity: 0.92; }
+  .ambient-cat { width: 82px; height: 82px; right: 10px; top: 24px; opacity: 0.14; }
+  .app-cat { width: 82px; right: 8px; top: 40px; opacity: 0.92; }
   .cat-paws { right: 78px; top: 112px; gap: 5px; }
   .cat-paws span { width: 13px; height: 13px; }
   .login-screen { padding: 12px; align-items: center; }
@@ -1605,11 +1742,14 @@ body::after {
   .chart-card { border-radius: 24px; }
   .field label { font-size: 0.62rem; }
   .field input, .field select, .field textarea { min-height: 34px; padding: 6px 8px; font-size: 0.78rem; }
-  .date-field input { min-height: 42px; padding-right: 40px; }
-  .date-field::after { right: 14px; bottom: 13px; width: 22px; height: 22px; }
+  .today-date-pill { min-height: 42px; padding: 0 12px; font-size: 0.9rem; }
+  .today-date-pill::after { padding: 4px 8px; font-size: 0.64rem; }
+  .custom-select-trigger { min-height: 42px; font-size: 0.9rem; }
+  .custom-select-menu { max-height: 190px; padding: 7px; }
   .check-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
-  .choice { padding: 5px 2px; font-size: 0.72rem; }
-  .choice div:last-child { display: none; }
+  .choice { min-height: 48px; padding: 4px 2px; font-size: 0.92rem; border-radius: 12px; }
+  .choice .mood-emoji { font-size: 1.06rem; }
+  .choice div:last-child { display: block; margin-top: 2px; font-size: 0.52rem !important; line-height: 1.05; color: rgba(255,248,243,0.82); }
   .edit-card { padding: 14px 12px 12px; }
   .edit-card h3 { margin: 8px 0 5px; font-size: 0.96rem; }
   .mood-chip { padding: 6px 9px; font-size: 0.66rem; }
@@ -1802,13 +1942,9 @@ body::after {
         <div class="edit-copy" id="todayCopy">今天不是看总表，而是先把这一张卡完成。你的晨重、晚重、体脂率和运动都只改当天这一条，手机上会更轻松。</div>
 
         <div class="field-grid">
-          <div class="field date-field">
-            <label>日期</label>
-            <input type="text" id="fieldDate" readonly inputmode="none" onclick="openDatePicker()">
-          </div>
-          <div class="field">
-            <label>访问日</label>
-            <input type="text" id="fieldDayText" disabled>
+          <div class="field date-display-field">
+            <label>今天日期</label>
+            <div class="today-date-pill" id="fieldDateDisplay">2026年7月4日 周六</div>
           </div>
           <div class="field">
             <label>晨重</label>
@@ -1835,7 +1971,13 @@ body::after {
           </div>
           <div class="field compact-span">
             <label>运动类型</label>
-            <select id="fieldExerciseType"></select>
+            <div class="custom-select" id="exerciseTypeSelect">
+              <button class="custom-select-trigger" id="exerciseTypeTrigger" type="button" onclick="toggleExerciseTypeMenu()">
+                <span id="exerciseTypeValue">未选择</span>
+                <strong>⌄</strong>
+              </button>
+              <div class="custom-select-menu" id="exerciseTypeMenu"></div>
+            </div>
           </div>
           <div class="field full">
             <label>心情状态</label>
@@ -1870,6 +2012,10 @@ body::after {
               <div class="chart-meta" id="weightTrendMeta">最近 4 周</div>
             </div>
             <div class="segmented" id="weightRangeTabs"></div>
+            <div class="field full" id="weightCustomDaysField" style="display:none;margin-top:8px">
+              <label>自定义天数</label>
+              <input type="number" id="weightCustomDays" min="1" max="365" value="30" oninput="setCustomTrendDays(this.value)">
+            </div>
             <div class="chart-shell" id="weightChart"></div>
             <div class="chart-legend">
               <div class="legend-left">
@@ -1889,6 +2035,10 @@ body::after {
               <div class="chart-meta" id="bodyFatTrendMeta">最近 4 周</div>
             </div>
             <div class="segmented" id="bodyFatRangeTabs"></div>
+            <div class="field full" id="bodyFatCustomDaysField" style="display:none;margin-top:8px">
+              <label>自定义天数</label>
+              <input type="number" id="bodyFatCustomDays" min="1" max="365" value="30" oninput="setCustomTrendDays(this.value)">
+            </div>
             <div class="chart-shell" id="bodyFatChart"></div>
             <div class="chart-legend">
               <div class="legend-left">
@@ -1925,7 +2075,7 @@ body::after {
       <div class="setup-grid">
         <div class="field settings-mirror">
           <label>开始日期</label>
-          <input type="date" id="startDateRouteMirror" disabled>
+          <input type="text" id="startDateRouteMirror" readonly disabled>
         </div>
         <div class="field settings-mirror">
           <label>当前阶段</label>
@@ -1936,7 +2086,7 @@ body::after {
       <div class="setup-grid">
         <div class="field">
           <label>开始日期</label>
-          <input type="date" id="startDate">
+          <input type="text" id="startDate" readonly inputmode="none" onclick="openDatePicker('setup')">
         </div>
         <div class="field">
           <label>目标体重</label>
@@ -1989,18 +2139,19 @@ const TOTAL_DAYS = 100;
 const TOTAL_WEEKS = Math.ceil(TOTAL_DAYS / 7);
 const exerciseTypes = ['跑步', '快走', '跳绳', '骑行', '游泳', '健身操', '力量训练', '瑜伽', 'HIIT', '爬山', '球类', '其他'];
 const moods = [
-  { val: '', icon: '⚪', label: '留空' },
-  { val: 'great', icon: '😄', label: '很棒' },
-  { val: 'good', icon: '🙂', label: '不错' },
-  { val: 'ok', icon: '😐', label: '一般' },
-  { val: 'tired', icon: '😮‍💨', label: '有点累' },
-  { val: 'bad', icon: '😣', label: '状态差' }
+  { val: '', icon: '🤍', label: '留空' },
+  { val: 'great', icon: '🥳', label: '很棒' },
+  { val: 'good', icon: '😺', label: '不错' },
+  { val: 'ok', icon: '🐣', label: '一般' },
+  { val: 'tired', icon: '🥺', label: '有点累' },
+  { val: 'bad', icon: '😵', label: '状态差' }
 ];
 const rangeOptions = [
   { key: 'week', label: '本周' },
   { key: '4w', label: '4周' },
   { key: '12w', label: '12周' },
-  { key: '100d', label: '100天' }
+  { key: '100d', label: '100天' },
+  { key: 'custom', label: '自定义' }
 ];
 const phaseDefinitions = [
   { start: 1, end: 3, title: '第 1-3 周 · 建立习惯', desc: '先把晨重、体脂率和记录动作做稳定。', tag: '当前阶段' },
@@ -2027,6 +2178,13 @@ let touchStartX = null;
 let touchStartY = null;
 let datePickerMonth = null;
 let lastSyncError = '';
+let activeDatePickerTarget = 'today';
+let beijingToday = '';
+let customTrendDays = 30;
+let currentWeekStart = '';
+let historyWeekStart = '';
+let weekViewStart = '';
+let selectedExerciseType = '';
 
 function qs(id) {
   return document.getElementById(id);
@@ -2142,12 +2300,80 @@ function getMorningEveningDiff(entry) {
   return evening - morning;
 }
 
+function parseDateOnly(dateStr) {
+  if (!dateStr) return null;
+  const [y, m, d] = String(dateStr).slice(0, 10).split('-').map(Number);
+  if (!y || !m || !d) return null;
+  return new Date(y, m - 1, d);
+}
+
+function formatDateOnly(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return '';
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function addDays(dateStr, delta) {
+  const base = parseDateOnly(dateStr);
+  if (!base) return '';
+  const next = new Date(base);
+  next.setDate(base.getDate() + delta);
+  return formatDateOnly(next);
+}
+
+function diffDays(startStr, endStr) {
+  const start = parseDateOnly(startStr);
+  const end = parseDateOnly(endStr);
+  if (!start || !end) return 0;
+  const a = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const b = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+  return Math.round((b - a) / 86400000);
+}
+
+function getMonday(dateStr) {
+  const date = parseDateOnly(dateStr);
+  if (!date) return '';
+  const day = date.getDay();
+  const offset = day === 0 ? -6 : 1 - day;
+  date.setDate(date.getDate() + offset);
+  return formatDateOnly(date);
+}
+
+function getWeekDates(weekStartStr) {
+  if (!weekStartStr) return [];
+  return Array.from({ length: 7 }, (_, index) => addDays(weekStartStr, index));
+}
+
+function getRecordByDate(dateStr) {
+  if (!dateStr) return null;
+  return Object.values(data).find(entry => entry && entry.date === dateStr) || null;
+}
+
+function upsertEntryByDate(dateStr) {
+  const existingKey = Object.keys(data).find(key => data[key] && data[key].date === dateStr);
+  if (existingKey) return { key: Number(existingKey), entry: data[existingKey] };
+  const keys = Object.keys(data).map(Number).filter(Number.isFinite);
+  const nextKey = keys.length ? Math.max(...keys) + 1 : 1;
+  data[nextKey] = { date: dateStr };
+  return { key: nextKey, entry: data[nextKey] };
+}
+
+async function fetchBeijingToday() {
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Shanghai',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+  beijingToday = formatter.format(new Date());
+  return beijingToday;
+}
+
 function getDateForDay(day) {
   if (!setup.start_date) return '';
-  const start = new Date(setup.start_date + 'T00:00:00');
-  const date = new Date(start);
-  date.setDate(start.getDate() + day - 1);
-  return date.toISOString().slice(0, 10);
+  return addDays(setup.start_date, day - 1);
 }
 
 function getDateLabel(dateStr) {
@@ -2157,26 +2383,46 @@ function getDateLabel(dateStr) {
   return `${date.getMonth() + 1}月${date.getDate()}日 ${days[date.getDay()]}`;
 }
 
+function getTodayDisplayLabel(dateStr) {
+  if (!dateStr) return '';
+  const date = parseDateOnly(dateStr);
+  if (!date) return dateStr;
+  const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+  return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${days[date.getDay()]}`;
+}
+
 function normalizeDateInput(date) {
-  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return '';
-  return date.toISOString().slice(0, 10);
+  return formatDateOnly(date);
 }
 
 function getMonthLabel(date) {
   return `${date.getFullYear()}年 ${date.getMonth() + 1}月`;
 }
 
-function getShortDayLabel(day) {
-  const dateStr = getEntryDate(day);
+function getShortDayLabel(dateInput) {
+  const dateStr = typeof dateInput === 'string' ? dateInput : getEntryDate(dateInput);
   if (!dateStr) return '';
   const date = new Date(dateStr + 'T00:00:00');
   const names = ['日', '一', '二', '三', '四', '五', '六'];
   return names[date.getDay()];
 }
 
+function getShortWeekRangeLabel(weekStartStr) {
+  if (!weekStartStr) return '';
+  const endDateStr = addDays(weekStartStr, 6);
+  const startDate = parseDateOnly(weekStartStr);
+  const endDate = parseDateOnly(endDateStr);
+  if (!startDate || !endDate) return '';
+  return `${startDate.getMonth() + 1}月${startDate.getDate()}日 - ${endDate.getMonth() + 1}月${endDate.getDate()}日`;
+}
+
 function getEntryDate(day) {
   const entry = data[day] || {};
   return entry.date || getDateForDay(day);
+}
+
+function getTodayDate() {
+  return beijingToday || formatDateOnly(new Date());
 }
 
 function getWeekDays(week) {
@@ -2225,13 +2471,14 @@ function findWeekForDay(day) {
 }
 
 function getWeekSummary(week) {
-  const days = getWeekDays(week);
+  const weekStart = weekViewStart || currentWeekStart || getMonday(getTodayDate());
+  const days = getWeekDates(weekStart);
   let filled = 0;
   let exerciseDays = 0;
   let weights = [];
   let bodyFats = [];
-  for (const day of days) {
-    const entry = data[day] || {};
+  for (const dateStr of days) {
+    const entry = getRecordByDate(dateStr) || {};
     if (isDayFilled(entry)) filled++;
     if (entry.exercise) exerciseDays++;
     const weight = getDisplayWeight(entry);
@@ -2584,6 +2831,8 @@ async function showMainApp() {
   qs('loginScreen').classList.add('hidden');
   qs('loadingScreen').classList.remove('hidden');
 
+  await fetchBeijingToday();
+
   qs('startDate').value = setup.start_date || new Date().toISOString().slice(0, 10);
   qs('startWeight').value = setup.start_weight || '';
   qs('goalWeight').value = setup.goal_weight || '';
@@ -2604,8 +2853,12 @@ async function showMainApp() {
 
   seedMissingDates();
   hydrateStaticChoices();
-  selectedDay = findLatestFilledDay();
+  const todayIndex = Math.max(1, diffDays(setup.start_date || getTodayDate(), getTodayDate()) + 1);
+  selectedDay = todayIndex;
   currentWeek = findWeekForDay(selectedDay);
+  currentWeekStart = getMonday(getTodayDate());
+  weekViewStart = currentWeekStart;
+  historyWeekStart = currentWeekStart;
   currentRoute = getRouteFromHash();
   qs('loadingScreen').classList.add('hidden');
   qs('mainApp').classList.remove('hidden');
@@ -2702,17 +2955,20 @@ async function loadAllData() {
 }
 
 function hydrateStaticChoices() {
-  const exTypeEl = qs('fieldExerciseType');
-  if (!exTypeEl.dataset.ready) {
-    exTypeEl.innerHTML = `<option value="">未选择</option>${exerciseTypes.map(type => `<option value="${type}">${type}</option>`).join('')}`;
-    exTypeEl.dataset.ready = '1';
+  const exTypeMenu = qs('exerciseTypeMenu');
+  if (!exTypeMenu.dataset.ready) {
+    exTypeMenu.innerHTML = [
+      `<button class="custom-select-option" type="button" data-value="" onclick="chooseExerciseType('')">未选择</button>`,
+      ...exerciseTypes.map(type => `<button class="custom-select-option" type="button" data-value="${type}" onclick="chooseExerciseType('${type}')">${type}</button>`)
+    ].join('');
+    exTypeMenu.dataset.ready = '1';
   }
 
   const moodChoicesEl = qs('moodChoices');
   if (!moodChoicesEl.dataset.ready) {
     moodChoicesEl.innerHTML = moods.map(mood => `
       <div class="choice" data-value="${mood.val}" onclick="setCurrentMood('${mood.val.replace(/'/g, "\\'")}')">
-        <div>${mood.icon}</div>
+        <div class="mood-emoji">${mood.icon}</div>
         <div style="margin-top:4px;font-size:0.72rem">${mood.label}</div>
       </div>
     `).join('');
@@ -2796,11 +3052,15 @@ function applyMoodTheme(mood) {
 }
 
 function renderApp() {
+  selectedDay = Math.max(1, diffDays(setup.start_date || getTodayDate(), getTodayDate()) + 1);
+  currentWeek = findWeekForDay(selectedDay);
+  currentWeekStart = getMonday(getTodayDate());
+  weekViewStart = weekViewStart || currentWeekStart;
   const mood = getMoodState(selectedDay);
   const phase = getCurrentPhase(currentWeek);
   applyMoodTheme(mood);
   if (qs('heroMetaCopy')) qs('heroMetaCopy').textContent = mood.hero;
-  qs('weekRange').textContent = getWeekRangeLabel(currentWeek);
+  qs('weekRange').textContent = getShortWeekRangeLabel(weekViewStart);
   qs('weekLabel').textContent = phase.title;
   if (qs('startDateRouteMirror')) qs('startDateRouteMirror').value = setup.start_date || '';
   if (qs('phaseRouteMirror')) qs('phaseRouteMirror').value = phase.title;
@@ -2816,24 +3076,27 @@ function renderApp() {
 }
 
 function renderWeekStrip() {
-  const weekDays = getWeekDays(currentWeek);
-  const html = weekDays.map(day => {
-    const entry = data[day] || {};
-    const dateStr = getEntryDate(day);
-    const date = dateStr ? new Date(dateStr + 'T00:00:00') : null;
-    const state = getMoodState(day);
+  const weekDates = getWeekDates(weekViewStart || currentWeekStart);
+  const html = weekDates.map((dateStr, index) => {
+    const entry = getRecordByDate(dateStr) || {};
+    const date = parseDateOnly(dateStr);
+    const dayIndex = Math.max(1, diffDays(setup.start_date || dateStr, dateStr) + 1);
+    const state = getMoodState(dayIndex);
     const diffText = getDisplayWeight(entry) !== null ? formatValue(getDisplayWeight(entry), 'kg') : '待记录';
+    const clickable = isDayFilled(entry);
     return `
-      <div class="day-card ${day === selectedDay ? 'active' : ''}" style="${getDayCardStyle(state, day)}" onclick="selectDay(${day})">
-        <div class="day-top">周${getShortDayLabel(day)}</div>
-        <div class="day-date">${date ? date.getDate() : day}</div>
+      <div class="day-card ${dayIndex === selectedDay ? 'active' : ''} ${clickable ? '' : 'disabled'}" style="${getDayCardStyle(state, dayIndex)};${clickable ? '' : 'opacity:.58;cursor:default'}" ${clickable ? `onclick="selectDay(${dayIndex})"` : ''}>
+        <div class="day-top">周${getShortDayLabel(dateStr)}</div>
+        <div class="day-date">${date ? date.getDate() : index + 1}</div>
         <div class="day-state">${diffText}</div>
         <div class="day-dot" style="background:${state.dot}"></div>
       </div>
     `;
   }).join('');
   qs('daysStrip').innerHTML = html;
-  qs('weekCompletion').textContent = `${getWeekSummary(currentWeek).filled} / ${getWeekSummary(currentWeek).total}`;
+  qs('weekRange').textContent = getShortWeekRangeLabel(weekViewStart || currentWeekStart);
+  const weekSummary = getWeekSummary(currentWeek);
+  qs('weekCompletion').textContent = `${weekSummary.filled} / ${weekSummary.total}`;
 }
 
 function getDayCardStyle(state, day) {
@@ -2844,8 +3107,11 @@ function getDayCardStyle(state, day) {
   return `background:${visual.dayBg}; border-color:${visual.dayBorder}; box-shadow:${activeRing};`;
 }
 
-function openDatePicker() {
-  const currentValue = qs('fieldDate').value || getDateForDay(selectedDay) || new Date().toISOString().slice(0, 10);
+function openDatePicker(target = 'today') {
+  activeDatePickerTarget = target;
+  const inputId = 'startDate';
+  const fallback = setup.start_date || getTodayDate();
+  const currentValue = qs(inputId).value || fallback;
   const current = new Date(currentValue + 'T00:00:00');
   datePickerMonth = new Date(current.getFullYear(), current.getMonth(), 1);
   renderDatePicker();
@@ -2865,10 +3131,10 @@ function shiftDateMonth(delta) {
 
 function renderDatePicker() {
   const month = datePickerMonth || new Date();
-  const selected = qs('fieldDate').value;
+  const selected = qs('startDate').value;
   const today = new Date();
   qs('datePickerTitle').textContent = getMonthLabel(month);
-  qs('datePickerSub').textContent = selected ? getDateLabel(selected) : '选择记录日期';
+  qs('datePickerSub').textContent = selected ? getDateLabel(selected) : '选择减脂开始日期';
 
   const first = new Date(month.getFullYear(), month.getMonth(), 1);
   const start = new Date(first);
@@ -2891,8 +3157,8 @@ function renderDatePicker() {
 }
 
 function selectDateValue(value) {
-  qs('fieldDate').value = value;
-  qs('fieldDayText').value = `第 ${selectedDay} 天 · ${getDateLabel(value)}`;
+  qs('startDate').value = value;
+  if (qs('startDateRouteMirror')) qs('startDateRouteMirror').value = value;
   closeDatePicker();
 }
 
@@ -2901,7 +3167,9 @@ function pickTodayDate() {
 }
 
 function renderSelectedDayCard(mood) {
-  const entry = ensureEntry(selectedDay);
+  const todayDate = getTodayDate();
+  const record = upsertEntryByDate(todayDate);
+  const entry = record.entry;
   const visual = getMoodVisual(mood.key);
   const card = qs('todayCard');
   card.className = `edit-card ${mood.className}`;
@@ -2911,17 +3179,19 @@ function renderSelectedDayCard(mood) {
   qs('todayHeadline').textContent = mood.title;
   qs('todayCopy').textContent = mood.copy;
 
-  qs('fieldDate').value = entry.date || getDateForDay(selectedDay);
-  qs('fieldDayText').value = `第 ${selectedDay} 天 · ${getDateLabel(qs('fieldDate').value)}`;
+  qs('fieldDateDisplay').textContent = getTodayDisplayLabel(todayDate);
   qs('fieldMorningWeight').value = entry.morningWeight ?? '';
   qs('fieldEveningWeight').value = entry.eveningWeight ?? '';
   qs('fieldBodyFat').value = entry.bodyFat ?? '';
   qs('fieldDuration').value = entry.duration ?? '';
-  qs('fieldExerciseType').value = entry.exType || '';
+  selectedExerciseType = entry.exType || '';
+  renderExerciseTypeSelect();
   qs('fieldNote').value = entry.note || '';
   updateExerciseToggle(entry.exercise);
   updateMoodChoices(entry.mood || '');
-  qs('todayNote').textContent = isDayFilled(entry) ? '保存后会同步更新这一天、本周完成率和趋势图。' : '今天还没开始记录，先填最重要的晨重和体脂率也可以。';
+  qs('todayNote').textContent = isDayFilled(entry) ? '更新后会同步刷新今天、本周和趋势数据。' : '今天还没开始记录，先填最重要的晨重和体脂率也可以。';
+  const saveBtn = qs('todayCard').querySelector('.save-field .btn');
+  if (saveBtn) saveBtn.textContent = isDayFilled(entry) ? '更新今天这张卡' : '保存今天这张卡';
 }
 
 function updateExerciseToggle(active) {
@@ -2946,6 +3216,29 @@ function updateMoodChoices(activeValue) {
   });
 }
 
+function renderExerciseTypeSelect() {
+  const value = selectedExerciseType || '';
+  const valueEl = qs('exerciseTypeValue');
+  if (valueEl) valueEl.textContent = value || '未选择';
+  qs('exerciseTypeMenu')?.querySelectorAll('.custom-select-option').forEach(node => {
+    node.classList.toggle('active', node.dataset.value === value);
+  });
+}
+
+function toggleExerciseTypeMenu() {
+  qs('exerciseTypeSelect').classList.toggle('open');
+}
+
+function closeExerciseTypeMenu() {
+  qs('exerciseTypeSelect')?.classList.remove('open');
+}
+
+function chooseExerciseType(value) {
+  selectedExerciseType = value;
+  renderExerciseTypeSelect();
+  closeExerciseTypeMenu();
+}
+
 function renderStats() {
   let latestWeight = null;
   let latestBodyFat = null;
@@ -2953,8 +3246,8 @@ function renderStats() {
   let exerciseDays = 0;
   let filledDays = 0;
 
-  for (let day = 1; day <= TOTAL_DAYS; day++) {
-    const entry = data[day] || {};
+  const entries = Object.values(data).filter(Boolean).sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+  for (const entry of entries) {
     const displayWeight = getDisplayWeight(entry);
     const bodyFat = getBodyFatValue(entry);
     const compare = getMorningEveningDiff(entry);
@@ -2962,7 +3255,7 @@ function renderStats() {
     if (bodyFat !== null) latestBodyFat = bodyFat;
     if (compare !== null) latestCompare = compare;
     if (entry.exercise) exerciseDays++;
-    if (isDayFilled(entry)) filledDays = Math.max(filledDays, day);
+    if (isDayFilled(entry)) filledDays++;
   }
 
   const startWeight = setup.start_weight ? parseFloat(setup.start_weight) : null;
@@ -2992,7 +3285,8 @@ function renderStats() {
     qs('toGoal').textContent = '—';
   }
 
-  const pct = Math.round((filledDays / TOTAL_DAYS) * 100);
+  const elapsedDays = Math.min(TOTAL_DAYS, Math.max(1, diffDays(setup.start_date || getTodayDate(), getTodayDate()) + 1));
+  const pct = Math.round((elapsedDays / TOTAL_DAYS) * 100);
   qs('progressLabel').textContent = `${pct}%`;
   qs('progressFill').style.width = `${pct}%`;
 }
@@ -3013,19 +3307,20 @@ function renderPhaseTrack() {
 
 function renderHistory() {
   const body = qs('historyBody');
-  historyWeek = Math.max(1, Math.min(TOTAL_WEEKS, historyWeek || currentWeek || 1));
-  qs('historyWeekLabel').textContent = `第 ${historyWeek} 周`;
-  const days = getWeekDays(historyWeek);
-  const summary = getWeekSummary(historyWeek);
-  const items = days.map(day => {
-    const entry = data[day] || {};
+  historyWeekStart = historyWeekStart || currentWeekStart || getMonday(getTodayDate());
+  qs('historyWeekLabel').textContent = getShortWeekRangeLabel(historyWeekStart);
+  const dates = getWeekDates(historyWeekStart);
+  const items = dates.map(dateStr => {
+    const entry = getRecordByDate(dateStr) || {};
+    const day = Math.max(1, diffDays(setup.start_date || dateStr, dateStr) + 1);
     const state = getMoodState(day);
-    const dateText = getDateLabel(getEntryDate(day));
+    const dateText = getDateLabel(dateStr);
     const bodyFat = getBodyFatValue(entry);
     const weight = getDisplayWeight(entry);
+    const clickable = isDayFilled(entry);
     return `
-      <div class="history-row" onclick="jumpToDay(${day})" style="cursor:pointer">
-        <div class="history-day">${day}</div>
+      <div class="history-row" ${clickable ? `onclick="jumpToDay(${day})" style="cursor:pointer"` : 'style="opacity:.62"'} >
+        <div class="history-day">${parseDateOnly(dateStr)?.getDate() || ''}</div>
         <div class="history-main">
           <strong>${dateText}</strong>
           <span>${weight !== null ? `${weight.toFixed(1)} kg` : '待记录'} · ${bodyFat !== null ? `${bodyFat.toFixed(1)}% 体脂` : '未填体脂'} · ${state.label.replace('今日状态 · ', '')}</span>
@@ -3035,49 +3330,35 @@ function renderHistory() {
     `;
   }).join('');
 
+  const filled = dates.filter(dateStr => isDayFilled(getRecordByDate(dateStr) || {})).length;
+  const avgWeights = dates.map(dateStr => getDisplayWeight(getRecordByDate(dateStr) || {})).filter(Number.isFinite);
+
   body.innerHTML = `
     <div class="history-head" style="margin-bottom:8px">
       <div>
-        <strong>${getWeekRangeLabel(historyWeek)}</strong>
-        <div style="color:var(--soft);font-size:0.78rem">本周已记录 ${summary.filled}/${summary.total} 天</div>
+        <strong>${getDateLabel(dates[0])} - ${getDateLabel(dates[dates.length - 1])}</strong>
+        <div style="color:var(--soft);font-size:0.78rem">本周已记录 ${filled}/${dates.length} 天</div>
       </div>
-      <div class="history-side">${summary.avgWeight !== null ? `均重 ${summary.avgWeight.toFixed(1)} kg` : '等待更多记录'}</div>
+      <div class="history-side">${avgWeights.length ? `均重 ${(avgWeights.reduce((sum, v) => sum + v, 0) / avgWeights.length).toFixed(1)} kg` : '等待更多记录'}</div>
     </div>
     <div class="history-list">${items}</div>
   `;
 }
 
-function getFilteredDays(rangeKey) {
-  if (rangeKey === 'week') return getWeekDays(currentWeek);
-  if (rangeKey === '4w') {
-    const startWeek = Math.max(1, currentWeek - 3);
-    let days = [];
-    for (let week = startWeek; week <= currentWeek; week++) days = days.concat(getWeekDays(week));
-    return days;
-  }
-  if (rangeKey === '12w') {
-    const startWeek = Math.max(1, currentWeek - 11);
-    let days = [];
-    for (let week = startWeek; week <= currentWeek; week++) days = days.concat(getWeekDays(week));
-    return days;
-  }
-  return Array.from({ length: TOTAL_DAYS }, (_, i) => i + 1);
-}
-
 function renderWeightChart() {
   buildRangeTabs('weightRangeTabs', weightRange, setWeightRange);
-  const days = getFilteredDays(weightRange);
+  const dateRange = getDateRangeByKey(weightRange);
   const morningSeries = [];
   const eveningSeries = [];
-  for (const day of days) {
-    const entry = data[day] || {};
+  for (const dateStr of dateRange.dates) {
+    const entry = getRecordByDate(dateStr) || {};
     const morning = getMorningWeight(entry);
     const evening = getEveningWeight(entry);
-    if (morning !== null) morningSeries.push({ day, value: morning, label: getDateLabel(getEntryDate(day)) });
-    if (evening !== null) eveningSeries.push({ day, value: evening, label: getDateLabel(getEntryDate(day)) });
+    if (morning !== null) morningSeries.push({ date: dateStr, value: morning, label: getDateLabel(dateStr) });
+    if (evening !== null) eveningSeries.push({ date: dateStr, value: evening, label: getDateLabel(dateStr) });
   }
 
-  qs('weightTrendMeta').textContent = getRangeTitle(weightRange);
+  qs('weightTrendMeta').textContent = dateRange.title;
   if (morningSeries.length + eveningSeries.length < 2) {
     qs('weightChart').innerHTML = `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:var(--soft);font-size:0.86rem">先录入至少 2 次晨重或晚重，这里会自动生成体重趋势。</div>`;
     return;
@@ -3087,16 +3368,16 @@ function renderWeightChart() {
   const values = all.map(item => item.value);
   const minValue = Math.min(...values);
   const maxValue = Math.max(...values);
-  const range = Math.max(maxValue - minValue, 0.8);
+  const valueRange = Math.max(maxValue - minValue, 0.8);
   const width = 720;
   const height = 220;
   const pad = 18;
   const goalWeight = setup.goal_weight ? parseFloat(setup.goal_weight) : null;
 
-  const morningPoints = pointsForSeries(morningSeries, days, minValue, range, width, height, pad);
-  const eveningPoints = pointsForSeries(eveningSeries, days, minValue, range, width, height, pad);
+  const morningPoints = pointsForSeries(morningSeries, dateRange.dates, minValue, valueRange, width, height, pad);
+  const eveningPoints = pointsForSeries(eveningSeries, dateRange.dates, minValue, valueRange, width, height, pad);
   const bubbleText = all[all.length - 1] ? `最新 ${all[all.length - 1].value.toFixed(1)} kg` : '';
-  const goalY = goalWeight !== null ? pointY(goalWeight, minValue, range, height, pad) : null;
+  const goalY = goalWeight !== null ? pointY(goalWeight, minValue, valueRange, height, pad) : null;
 
   qs('weightChart').innerHTML = `
     <div class="chart-bubble">${bubbleText}</div>
@@ -3112,14 +3393,14 @@ function renderWeightChart() {
 
 function renderBodyFatChart() {
   buildRangeTabs('bodyFatRangeTabs', bodyFatRange, setBodyFatRange);
-  const days = getFilteredDays(bodyFatRange);
+  const dateRange = getDateRangeByKey(bodyFatRange);
   const series = [];
-  for (const day of days) {
-    const bodyFat = getBodyFatValue(data[day] || {});
-    if (bodyFat !== null) series.push({ day, value: bodyFat, label: getDateLabel(getEntryDate(day)) });
+  for (const dateStr of dateRange.dates) {
+    const bodyFat = getBodyFatValue(getRecordByDate(dateStr) || {});
+    if (bodyFat !== null) series.push({ date: dateStr, value: bodyFat, label: getDateLabel(dateStr) });
   }
 
-  qs('bodyFatTrendMeta').textContent = getRangeTitle(bodyFatRange);
+  qs('bodyFatTrendMeta').textContent = dateRange.title;
   if (series.length < 2) {
     qs('bodyFatChart').innerHTML = `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:var(--soft);font-size:0.86rem">先录入至少 2 次体脂率，这里会自动生成体脂趋势。</div>`;
     return;
@@ -3128,11 +3409,11 @@ function renderBodyFatChart() {
   const values = series.map(item => item.value);
   const minValue = Math.min(...values);
   const maxValue = Math.max(...values);
-  const range = Math.max(maxValue - minValue, 0.6);
+  const valueRange = Math.max(maxValue - minValue, 0.6);
   const width = 720;
   const height = 220;
   const pad = 18;
-  const points = pointsForSeries(series, days, minValue, range, width, height, pad);
+  const points = pointsForSeries(series, dateRange.dates, minValue, valueRange, width, height, pad);
   qs('bodyFatChart').innerHTML = `
     <div class="chart-bubble">最新 ${series[series.length - 1].value.toFixed(1)} %</div>
     <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="体脂趋势图">
@@ -3142,13 +3423,13 @@ function renderBodyFatChart() {
   `;
 }
 
-function pointsForSeries(series, days, minValue, range, width, height, pad) {
-  const dayToIndex = new Map(days.map((day, index) => [day, index]));
+function pointsForSeries(series, dates, minValue, range, width, height, pad) {
+  const dayToIndex = new Map(dates.map((dateStr, index) => [dateStr, index]));
   const innerWidth = width - pad * 2;
   const innerHeight = height - pad * 2;
-  const denom = Math.max(days.length - 1, 1);
+  const denom = Math.max(dates.length - 1, 1);
   return series.map(item => {
-    const index = dayToIndex.get(item.day) || 0;
+    const index = dayToIndex.get(item.date) || 0;
     const x = pad + (index / denom) * innerWidth;
     const y = pointY(item.value, minValue, range, height, pad, innerHeight);
     return { x, y, ...item };
@@ -3163,13 +3444,6 @@ function pointY(value, minValue, range, height, pad, innerHeight) {
 
 function buildLinePath(points) {
   return points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(' ');
-}
-
-function getRangeTitle(rangeKey) {
-  if (rangeKey === 'week') return '当前周';
-  if (rangeKey === '4w') return '最近 4 周';
-  if (rangeKey === '12w') return '最近 12 周';
-  return '完整 100 天';
 }
 
 function selectDay(day) {
@@ -3188,11 +3462,7 @@ function jumpToDay(day) {
 
 function changeWeek(delta) {
   currentWeek = Math.max(1, Math.min(TOTAL_WEEKS, currentWeek + delta));
-  const weekDays = getWeekDays(currentWeek);
-  if (!weekDays.includes(selectedDay)) {
-    const target = weekDays.find(day => !isDayFilled(data[day] || {})) || weekDays[0];
-    selectedDay = target;
-  }
+  weekViewStart = addDays(weekViewStart || currentWeekStart || getMonday(getTodayDate()), delta * 7);
   renderApp();
 }
 
@@ -3222,12 +3492,14 @@ function bindSwipe() {
 
 function toggleHistory() {
   historyWeek = currentWeek;
+  historyWeekStart = weekViewStart || currentWeekStart;
   renderHistory();
   navigateTo('history');
 }
 
 function changeHistoryWeek(delta) {
   historyWeek = Math.max(1, Math.min(TOTAL_WEEKS, historyWeek + delta));
+  historyWeekStart = addDays(historyWeekStart || currentWeekStart || getMonday(getTodayDate()), delta * 7);
   renderHistory();
 }
 
@@ -3237,31 +3509,63 @@ function scrollToTodayCard() {
 }
 
 function toggleCurrentExercise() {
-  const entry = ensureEntry(selectedDay);
+  const entry = upsertEntryByDate(getTodayDate()).entry;
   entry.exercise = !entry.exercise;
   updateExerciseToggle(entry.exercise);
 }
 
 function setCurrentMood(value) {
-  ensureEntry(selectedDay).mood = value;
+  upsertEntryByDate(getTodayDate()).entry.mood = value;
   updateMoodChoices(value);
 }
 
+function getDateRangeByKey(rangeKey) {
+  const today = getTodayDate();
+  if (rangeKey === 'week') {
+    const start = getMonday(today);
+    return { start, end: addDays(start, 6), dates: getWeekDates(start), title: '本周' };
+  }
+  if (rangeKey === '4w') {
+    const end = today;
+    const start = addDays(end, -(28 - 1));
+    return { start, end, dates: Array.from({ length: 28 }, (_, i) => addDays(start, i)), title: '最近 4 周' };
+  }
+  if (rangeKey === '12w') {
+    const end = today;
+    const start = addDays(end, -(84 - 1));
+    return { start, end, dates: Array.from({ length: 84 }, (_, i) => addDays(start, i)), title: '最近 12 周' };
+  }
+  if (rangeKey === 'custom') {
+    const days = Math.max(1, parseInt(customTrendDays, 10) || 1);
+    const end = today;
+    const start = addDays(end, -(days - 1));
+    return { start, end, dates: Array.from({ length: days }, (_, i) => addDays(start, i)), title: `最近 ${days} 天` };
+  }
+  const end = today;
+  const start = addDays(end, -(100 - 1));
+  return { start, end, dates: Array.from({ length: 100 }, (_, i) => addDays(start, i)), title: '最近 100 天' };
+}
+
 async function saveCurrentDay() {
-  const entry = ensureEntry(selectedDay);
-  entry.date = qs('fieldDate').value || getDateForDay(selectedDay);
+  const todayDate = getTodayDate();
+  const record = upsertEntryByDate(todayDate);
+  selectedDay = Math.max(1, diffDays(setup.start_date || todayDate, todayDate) + 1);
+  currentWeek = findWeekForDay(selectedDay);
+  currentWeekStart = getMonday(todayDate);
+  const entry = record.entry;
+  entry.date = todayDate;
   entry.morningWeight = qs('fieldMorningWeight').value;
   entry.eveningWeight = qs('fieldEveningWeight').value;
   entry.bodyFat = qs('fieldBodyFat').value;
   entry.duration = qs('fieldDuration').value;
-  entry.exType = qs('fieldExerciseType').value;
+  entry.exType = selectedExerciseType;
   entry.note = qs('fieldNote').value.trim();
   entry.weight = getDisplayWeight(entry);
 
   localStorage.setItem(getUserCacheKey('data'), JSON.stringify(data));
   renderApp();
-  await persistDay(selectedDay);
-  showToast(isOnline ? '今天这张卡已同步保存' : '已保存到本地，线上同步失败');
+  await persistDay(record.key);
+  showToast(isOnline ? '今天数据已同步保存' : '已保存到本地，线上同步失败');
 }
 
 async function persistDay(day) {
@@ -3314,6 +3618,11 @@ async function saveSetup() {
   if (currentUser) currentUser.display_name = newSetup.display_name || currentUser.display_name;
   localStorage.setItem(getUserCacheKey('settings'), JSON.stringify(setup));
   seedMissingDates();
+  selectedDay = Math.max(1, diffDays(setup.start_date || getTodayDate(), getTodayDate()) + 1);
+  currentWeek = findWeekForDay(selectedDay);
+  currentWeekStart = getMonday(getTodayDate());
+  weekViewStart = currentWeekStart;
+  historyWeekStart = currentWeekStart;
   renderApp();
 
   if (!supabaseClient || (!currentUser?.legacy && !canUseRemote())) {
@@ -3345,12 +3654,22 @@ async function saveSetup() {
 
 function setWeightRange(key) {
   weightRange = key;
+  qs('weightCustomDaysField').style.display = key === 'custom' ? 'block' : 'none';
   renderWeightChart();
 }
 
 function setBodyFatRange(key) {
   bodyFatRange = key;
+  qs('bodyFatCustomDaysField').style.display = key === 'custom' ? 'block' : 'none';
   renderBodyFatChart();
+}
+
+function setCustomTrendDays(value) {
+  customTrendDays = Math.max(1, Math.min(365, parseInt(value, 10) || 30));
+  if (qs('weightCustomDays')) qs('weightCustomDays').value = customTrendDays;
+  if (qs('bodyFatCustomDays')) qs('bodyFatCustomDays').value = customTrendDays;
+  if (weightRange === 'custom') renderWeightChart();
+  if (bodyFatRange === 'custom') renderBodyFatChart();
 }
 
 function setSync(state) {
@@ -3412,6 +3731,14 @@ window.addEventListener('hashchange', () => {
   currentRoute = getRouteFromHash();
   if (!qs('mainApp').classList.contains('hidden')) {
     updateVisibleRoute();
+  }
+});
+
+document.addEventListener('click', event => {
+  const select = qs('exerciseTypeSelect');
+  if (!select) return;
+  if (!select.contains(event.target)) {
+    closeExerciseTypeMenu();
   }
 });
 </script>
