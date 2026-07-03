@@ -1,0 +1,72 @@
+<svg width="360" height="220" viewBox="0 0 360 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .paw-wave {
+      transform-box: fill-box;
+      transform-origin: 74% 34%;
+      animation: wave 1.28s ease-in-out infinite;
+    }
+    .tail {
+      transform-box: fill-box;
+      transform-origin: 18% 78%;
+      animation: tail 2.4s ease-in-out infinite;
+    }
+    .blink {
+      animation: blink 4.2s ease-in-out infinite;
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+    @keyframes wave {
+      0%, 100% { transform: rotate(-6deg) translateY(0); }
+      50% { transform: rotate(18deg) translateY(-7px); }
+    }
+    @keyframes tail {
+      0%, 100% { transform: rotate(-3deg); }
+      50% { transform: rotate(7deg); }
+    }
+    @keyframes blink {
+      0%, 92%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(0.12); }
+    }
+  </style>
+  <defs>
+    <linearGradient id="fur" x1="94" y1="25" x2="251" y2="204" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF4DC"/>
+      <stop offset="0.55" stop-color="#FFD3A9"/>
+      <stop offset="1" stop-color="#E9A477"/>
+    </linearGradient>
+    <linearGradient id="belly" x1="156" y1="108" x2="205" y2="200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF9EC"/>
+      <stop offset="1" stop-color="#FFE0BF"/>
+    </linearGradient>
+    <filter id="softShadow" x="45" y="16" width="270" height="218" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#1B2238" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+  <g filter="url(#softShadow)">
+    <path class="tail" d="M109 143C78 139 57 119 61 94C64 76 81 64 98 71C113 77 111 91 101 95C92 99 81 94 79 105C77 119 95 130 116 132L109 143Z" fill="#E9A477"/>
+    <path d="M95 156C95 113 132 78 180 78C228 78 265 113 265 156C265 191 232 205 180 205C128 205 95 191 95 156Z" fill="url(#fur)"/>
+    <path d="M140 160C140 132 157 113 180 113C203 113 220 132 220 160C220 184 204 195 180 195C156 195 140 184 140 160Z" fill="url(#belly)" opacity="0.92"/>
+    <path d="M111 92C111 49 141 23 180 23C219 23 249 49 249 92C249 129 219 148 180 148C141 148 111 129 111 92Z" fill="url(#fur)"/>
+    <path d="M126 53L117 18L151 38L126 53Z" fill="#FFD4AA"/>
+    <path d="M234 53L243 18L209 38L234 53Z" fill="#FFD4AA"/>
+    <path d="M129 42L123 25L142 36L129 42Z" fill="#F59F9C" opacity="0.68"/>
+    <path d="M231 42L237 25L218 36L231 42Z" fill="#F59F9C" opacity="0.68"/>
+    <ellipse class="blink" cx="161" cy="86" rx="7" ry="9" fill="#293044"/>
+    <ellipse class="blink" cx="199" cy="86" rx="7" ry="9" fill="#293044"/>
+    <path d="M180 97C176 97 173 95 173 92C173 89 176 87 180 87C184 87 187 89 187 92C187 95 184 97 180 97Z" fill="#E87C8D"/>
+    <path d="M180 97C177 104 171 107 165 104" stroke="#5F4B52" stroke-width="3" stroke-linecap="round"/>
+    <path d="M180 97C183 104 189 107 195 104" stroke="#5F4B52" stroke-width="3" stroke-linecap="round"/>
+    <path d="M131 93C116 90 105 87 95 82" stroke="#8E6B5A" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    <path d="M132 104C116 105 105 108 94 113" stroke="#8E6B5A" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    <path d="M229 93C244 90 255 87 265 82" stroke="#8E6B5A" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    <path d="M228 104C244 105 255 108 266 113" stroke="#8E6B5A" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    <path d="M93 156C83 151 75 140 78 128C80 119 88 113 97 116C105 119 105 130 99 134C94 138 91 144 98 149L93 156Z" fill="#FFD3A9"/>
+    <g class="paw-wave">
+      <path d="M263 124C277 111 296 114 302 130C309 149 291 167 274 159C259 152 251 135 263 124Z" fill="#FFD3A9"/>
+      <circle cx="281" cy="134" r="4" fill="#E98C94" opacity="0.74"/>
+      <circle cx="292" cy="140" r="4" fill="#E98C94" opacity="0.74"/>
+      <circle cx="274" cy="146" r="4" fill="#E98C94" opacity="0.74"/>
+    </g>
+    <path d="M113 151H247C258 151 267 160 267 171V178H93V171C93 160 102 151 113 151Z" fill="white" opacity="0.16"/>
+  </g>
+</svg>
