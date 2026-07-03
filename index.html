@@ -1150,6 +1150,13 @@ body::after {
   border-radius: 18px;
 }
 
+.save-actions-field {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: 8px;
+  align-items: end;
+}
+
 .check-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -1746,6 +1753,7 @@ body::after {
   .today-date-pill::after { padding: 4px 8px; font-size: 0.64rem; }
   .custom-select-trigger { min-height: 42px; font-size: 0.9rem; }
   .custom-select-menu { max-height: 190px; padding: 7px; }
+  .save-actions-field { grid-template-columns: 1fr; }
   .check-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
   .choice { min-height: 48px; padding: 4px 2px; font-size: 0.92rem; border-radius: 12px; }
   .choice .mood-emoji { font-size: 1.06rem; }
@@ -1987,8 +1995,9 @@ body::after {
             <label>备注</label>
             <textarea id="fieldNote" placeholder="比如今天吃得更稳、晚餐偏重、运动状态很好..."></textarea>
           </div>
-          <div class="field full save-field" style="display:flex;align-items:end">
-            <button class="btn btn-primary" style="width:100%" type="button" onclick="saveCurrentDay()">保存今天这张卡</button>
+          <div class="field full save-field save-actions-field">
+            <button class="btn btn-secondary" id="entryDateActionBtn" type="button" onclick="handleEntryDateAction()">补录其他天数据</button>
+            <button class="btn btn-primary" id="saveDayBtn" type="button" onclick="saveCurrentDay()">保存今天这张卡</button>
           </div>
         </div>
 
@@ -2185,6 +2194,7 @@ let currentWeekStart = '';
 let historyWeekStart = '';
 let weekViewStart = '';
 let selectedExerciseType = '';
+let activeEntryDate = '';
 
 function qs(id) {
   return document.getElementById(id);
@@ -2389,6 +2399,10 @@ function getTodayDisplayLabel(dateStr) {
   if (!date) return dateStr;
   const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
   return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${days[date.getDay()]}`;
+}
+
+function isViewingTodayEntry() {
+  return !activeEntryDate || activeEntryDate === getTodayDate();
 }
 
 function normalizeDateInput(date) {
@@ -2855,6 +2869,7 @@ async function showMainApp() {
   hydrateStaticChoices();
   const todayIndex = Math.max(1, diffDays(setup.start_date || getTodayDate(), getTodayDate()) + 1);
   selectedDay = todayIndex;
+  activeEntryDate = getTodayDate();
   currentWeek = findWeekForDay(selectedDay);
   currentWeekStart = getMonday(getTodayDate());
   weekViewStart = currentWeekStart;
@@ -3109,9 +3124,9 @@ function getDayCardStyle(state, day) {
 
 function openDatePicker(target = 'today') {
   activeDatePickerTarget = target;
-  const inputId = 'startDate';
-  const fallback = setup.start_date || getTodayDate();
-  const currentValue = qs(inputId).value || fallback;
+  const currentValue = target === 'setup'
+    ? (qs('startDate').value || setup.start_date || getTodayDate())
+    : (activeEntryDate || getTodayDate());
   const current = new Date(currentValue + 'T00:00:00');
   datePickerMonth = new Date(current.getFullYear(), current.getMonth(), 1);
   renderDatePicker();
@@ -3131,10 +3146,14 @@ function shiftDateMonth(delta) {
 
 function renderDatePicker() {
   const month = datePickerMonth || new Date();
-  const selected = qs('startDate').value;
+  const selected = activeDatePickerTarget === 'setup'
+    ? qs('startDate').value
+    : (activeEntryDate || getTodayDate());
   const today = new Date();
   qs('datePickerTitle').textContent = getMonthLabel(month);
-  qs('datePickerSub').textContent = selected ? getDateLabel(selected) : '选择减脂开始日期';
+  qs('datePickerSub').textContent = selected
+    ? getDateLabel(selected)
+    : (activeDatePickerTarget === 'setup' ? '选择减脂开始日期' : '选择要补录的日期');
 
   const first = new Date(month.getFullYear(), month.getMonth(), 1);
   const start = new Date(first);
@@ -3157,18 +3176,27 @@ function renderDatePicker() {
 }
 
 function selectDateValue(value) {
-  qs('startDate').value = value;
-  if (qs('startDateRouteMirror')) qs('startDateRouteMirror').value = value;
+  if (activeDatePickerTarget === 'setup') {
+    qs('startDate').value = value;
+    if (qs('startDateRouteMirror')) qs('startDateRouteMirror').value = value;
+  } else {
+    activeEntryDate = value;
+    const dayIndex = Math.max(1, diffDays(setup.start_date || value, value) + 1);
+    selectedDay = dayIndex;
+    currentWeek = findWeekForDay(selectedDay);
+    weekViewStart = getMonday(value);
+    renderApp();
+  }
   closeDatePicker();
 }
 
 function pickTodayDate() {
-  selectDateValue(new Date().toISOString().slice(0, 10));
+  selectDateValue(getTodayDate());
 }
 
 function renderSelectedDayCard(mood) {
-  const todayDate = getTodayDate();
-  const record = upsertEntryByDate(todayDate);
+  const entryDate = activeEntryDate || getTodayDate();
+  const record = upsertEntryByDate(entryDate);
   const entry = record.entry;
   const visual = getMoodVisual(mood.key);
   const card = qs('todayCard');
@@ -3179,7 +3207,7 @@ function renderSelectedDayCard(mood) {
   qs('todayHeadline').textContent = mood.title;
   qs('todayCopy').textContent = mood.copy;
 
-  qs('fieldDateDisplay').textContent = getTodayDisplayLabel(todayDate);
+  qs('fieldDateDisplay').textContent = getTodayDisplayLabel(entryDate);
   qs('fieldMorningWeight').value = entry.morningWeight ?? '';
   qs('fieldEveningWeight').value = entry.eveningWeight ?? '';
   qs('fieldBodyFat').value = entry.bodyFat ?? '';
@@ -3189,9 +3217,19 @@ function renderSelectedDayCard(mood) {
   qs('fieldNote').value = entry.note || '';
   updateExerciseToggle(entry.exercise);
   updateMoodChoices(entry.mood || '');
-  qs('todayNote').textContent = isDayFilled(entry) ? '更新后会同步刷新今天、本周和趋势数据。' : '今天还没开始记录，先填最重要的晨重和体脂率也可以。';
-  const saveBtn = qs('todayCard').querySelector('.save-field .btn');
-  if (saveBtn) saveBtn.textContent = isDayFilled(entry) ? '更新今天这张卡' : '保存今天这张卡';
+  const viewingToday = isViewingTodayEntry();
+  qs('entryDateActionBtn').textContent = viewingToday ? '补录其他天数据' : '返回今天';
+  qs('todayNote').textContent = viewingToday
+    ? (isDayFilled(entry) ? '更新后会同步刷新今天、本周和趋势数据。' : '今天还没开始记录，先填最重要的晨重和体脂率也可以。')
+    : (isDayFilled(entry) ? '这是补录日期，更新后会同步刷新这一天的数据库记录。' : '这是补录日期，当前没有记录，填完后会新建这一天的数据。');
+  const saveBtn = qs('saveDayBtn');
+  if (saveBtn) {
+    if (viewingToday) {
+      saveBtn.textContent = isDayFilled(entry) ? '更新今天这张卡' : '保存今天这张卡';
+    } else {
+      saveBtn.textContent = '更新这天这张卡';
+    }
+  }
 }
 
 function updateExerciseToggle(active) {
@@ -3237,6 +3275,18 @@ function chooseExerciseType(value) {
   selectedExerciseType = value;
   renderExerciseTypeSelect();
   closeExerciseTypeMenu();
+}
+
+function handleEntryDateAction() {
+  if (isViewingTodayEntry()) {
+    openDatePicker('entry');
+    return;
+  }
+  activeEntryDate = getTodayDate();
+  selectedDay = Math.max(1, diffDays(setup.start_date || activeEntryDate, activeEntryDate) + 1);
+  currentWeek = findWeekForDay(selectedDay);
+  weekViewStart = getMonday(activeEntryDate);
+  renderApp();
 }
 
 function renderStats() {
@@ -3509,13 +3559,13 @@ function scrollToTodayCard() {
 }
 
 function toggleCurrentExercise() {
-  const entry = upsertEntryByDate(getTodayDate()).entry;
+  const entry = upsertEntryByDate(activeEntryDate || getTodayDate()).entry;
   entry.exercise = !entry.exercise;
   updateExerciseToggle(entry.exercise);
 }
 
 function setCurrentMood(value) {
-  upsertEntryByDate(getTodayDate()).entry.mood = value;
+  upsertEntryByDate(activeEntryDate || getTodayDate()).entry.mood = value;
   updateMoodChoices(value);
 }
 
@@ -3547,13 +3597,14 @@ function getDateRangeByKey(rangeKey) {
 }
 
 async function saveCurrentDay() {
-  const todayDate = getTodayDate();
-  const record = upsertEntryByDate(todayDate);
-  selectedDay = Math.max(1, diffDays(setup.start_date || todayDate, todayDate) + 1);
+  const entryDate = activeEntryDate || getTodayDate();
+  const record = upsertEntryByDate(entryDate);
+  selectedDay = Math.max(1, diffDays(setup.start_date || entryDate, entryDate) + 1);
   currentWeek = findWeekForDay(selectedDay);
-  currentWeekStart = getMonday(todayDate);
+  currentWeekStart = getMonday(getTodayDate());
+  weekViewStart = getMonday(entryDate);
   const entry = record.entry;
-  entry.date = todayDate;
+  entry.date = entryDate;
   entry.morningWeight = qs('fieldMorningWeight').value;
   entry.eveningWeight = qs('fieldEveningWeight').value;
   entry.bodyFat = qs('fieldBodyFat').value;
@@ -3565,7 +3616,7 @@ async function saveCurrentDay() {
   localStorage.setItem(getUserCacheKey('data'), JSON.stringify(data));
   renderApp();
   await persistDay(record.key);
-  showToast(isOnline ? '今天数据已同步保存' : '已保存到本地，线上同步失败');
+  showToast(isOnline ? '这一天的数据已同步保存' : '已保存到本地，线上同步失败');
 }
 
 async function persistDay(day) {
