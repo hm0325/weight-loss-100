@@ -3,800 +3,2056 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#5a3d55">
+<meta name="theme-color" content="#5e5667">
 <title>减肥100天打卡</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
-  --bg-1: #2b2033;
-  --bg-2: #50364c;
-  --bg-3: #182233;
-  --surface: rgba(255, 255, 255, 0.11);
-  --surface-strong: rgba(255, 255, 255, 0.15);
-  --surface-soft: rgba(255, 255, 255, 0.08);
-  --line: rgba(255, 255, 255, 0.2);
-  --text-main: #fbf7fd;
-  --text-soft: rgba(251, 247, 253, 0.74);
-  --text-dim: rgba(251, 247, 253, 0.52);
-  --text-dark: #2f2437;
-  --warm-1: #ffe5ca;
-  --warm-2: #ffbf95;
-  --mint-1: #dcffeb;
-  --mint-2: #9ef1cd;
-  --danger: #ffd1c2;
-  --success: #a6efcd;
-  --shadow-main: 0 28px 72px rgba(16, 12, 24, 0.28);
-  --shadow-soft: 0 14px 36px rgba(16, 12, 24, 0.18);
+  --page-a: #111827;
+  --page-b: #263f52;
+  --page-c: #f2ad93;
+  --ink: #fffaf4;
+  --soft: rgba(255, 250, 244, 0.78);
+  --dim: rgba(255, 250, 244, 0.50);
+  --line: rgba(255, 255, 255, 0.20);
+  --glass: rgba(255, 255, 255, 0.10);
+  --glass-strong: rgba(255, 255, 255, 0.18);
+  --shadow-main: 0 32px 90px rgba(8, 16, 28, 0.42);
+  --shadow-soft: 0 18px 48px rgba(8, 16, 28, 0.24);
+  --dark-text: #2c1e18;
+  --warm-a: #ffe7bd;
+  --warm-b: #ffb46f;
+  --mint-a: #caf6dc;
+  --mint-b: #74dfba;
+  --blue-a: #d8efff;
+  --blue-b: #85bde8;
+  --orange-a: #ffd4a8;
+  --orange-b: #ff9c7c;
+  --reset-a: #d9d0e8;
+  --reset-b: #bbb0cf;
+  --good-a: #7b5d68;
+  --good-b: #2f524c;
+  --steady-a: #5f7285;
+  --steady-b: #334455;
+  --warn-a: #865f59;
+  --warn-b: #4d4044;
+  --reset-bg-a: #71687d;
+  --reset-bg-b: #444355;
+  --mood-accent: var(--warm-b);
+  --mood-accent-soft: rgba(255, 194, 141, 0.22);
+  --mood-bg-a: rgba(255, 202, 148, 0.42);
+  --mood-bg-b: rgba(116, 223, 186, 0.30);
+  --mood-bg-c: rgba(133, 189, 232, 0.34);
+  --mood-page-b: #263f52;
+  --mood-page-c: #f2ad93;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  height: 100%;
+}
 
 body {
-  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--ink);
   background:
-    radial-gradient(circle at 12% 14%, rgba(255, 207, 175, 0.26), transparent 22%),
-    radial-gradient(circle at 88% 10%, rgba(255, 152, 132, 0.18), transparent 20%),
-    linear-gradient(135deg, var(--bg-1), var(--bg-2) 42%, var(--bg-3));
-  color: var(--text-main);
-  min-height: 100vh;
-  padding: 18px 16px 28px;
+    radial-gradient(circle at 18% 18%, var(--mood-bg-a), transparent 22%),
+    radial-gradient(circle at 86% 12%, var(--mood-bg-b), transparent 20%),
+    radial-gradient(circle at 74% 82%, var(--mood-bg-c), transparent 26%),
+    linear-gradient(145deg, var(--page-a) 0%, var(--mood-page-b) 52%, #7f5d65 78%, var(--mood-page-c) 120%);
+  padding: 0;
+  overflow: hidden;
+  transition: background 0.5s ease;
 }
 
-.container {
-  max-width: 1320px;
-  margin: 0 auto;
-  padding: 18px;
-  border-radius: 36px;
-  background: rgba(8, 12, 22, 0.18);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: var(--shadow-main);
-  backdrop-filter: blur(18px) saturate(122%);
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto;
+  pointer-events: none;
+  z-index: 0;
 }
+
+body::before {
+  width: 48vw;
+  height: 48vw;
+  left: -14vw;
+  top: -18vw;
+  border-radius: 42% 58% 55% 45%;
+  background:
+    radial-gradient(circle at 35% 35%, rgba(255,255,255,0.40), transparent 18%),
+    linear-gradient(135deg, var(--mood-bg-a), var(--mood-bg-b));
+  filter: blur(2px);
+}
+
+body::after {
+  width: 42vw;
+  height: 42vw;
+  right: -12vw;
+  bottom: -15vw;
+  border-radius: 58% 42% 48% 52%;
+  background:
+    radial-gradient(circle at 62% 38%, rgba(255,255,255,0.28), transparent 16%),
+    linear-gradient(135deg, var(--mood-bg-c), var(--mood-bg-a));
+}
+
+@keyframes liquidDrift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(1.4vw, 1vh, 0) scale(1.03); }
+}
+
+.hidden { display: none !important; }
 
 .glass-card {
-  background: linear-gradient(180deg, var(--surface-strong), var(--surface));
+  position: relative;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.22), rgba(255,255,255,0.07)),
+    radial-gradient(circle at 12% 8%, rgba(255,255,255,0.22), transparent 30%);
   border: 1px solid var(--line);
-  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,0.15);
-  backdrop-filter: blur(18px) saturate(130%);
+  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,0.24), inset 0 -1px 0 rgba(255,255,255,0.08);
+  backdrop-filter: blur(24px) saturate(142%);
+}
+
+.ambient-cat {
+  position: fixed;
+  right: clamp(18px, 5vw, 72px);
+  top: clamp(78px, 12vh, 132px);
+  width: 128px;
+  height: 128px;
+  z-index: 0;
+  opacity: 0.42;
+  pointer-events: none;
+  filter: drop-shadow(0 24px 34px rgba(0,0,0,0.22));
+  animation: catFloat 7s ease-in-out infinite;
+}
+
+.ambient-cat::before {
+  content: "";
+  position: absolute;
+  inset: 26px 20px 16px;
+  border-radius: 44% 44% 48% 48%;
+  background: linear-gradient(145deg, rgba(255,255,255,0.34), rgba(255,255,255,0.08));
+  border: 1px solid rgba(255,255,255,0.28);
+  clip-path: polygon(8% 34%, 20% 4%, 38% 24%, 62% 24%, 80% 4%, 92% 34%, 86% 100%, 14% 100%);
+}
+
+.ambient-cat::after {
+  content: "♪";
+  position: absolute;
+  right: 4px;
+  top: 10px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: rgba(255,255,255,0.72);
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+@keyframes catFloat {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-10px) rotate(4deg); }
+}
+
+.login-screen,
+.loading-screen {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
 }
 
 .login-screen {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: calc(100vh - 32px);
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 16%, rgba(255, 238, 198, 0.34), transparent 26%),
+    radial-gradient(circle at 16% 76%, rgba(127, 211, 199, 0.24), transparent 30%),
+    radial-gradient(circle at 88% 72%, rgba(255, 152, 121, 0.24), transparent 28%),
+    linear-gradient(160deg, #101726 0%, #22354b 46%, #765764 100%);
+}
+
+.login-screen::before {
+  content: "";
+  position: absolute;
+  width: min(86vw, 520px);
+  height: min(86vw, 520px);
+  top: 4vh;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 45% 55% 50% 50%;
+  background:
+    radial-gradient(circle at 42% 36%, rgba(255, 230, 183, 0.36), transparent 28%),
+    linear-gradient(135deg, rgba(255, 190, 124, 0.20), rgba(105, 214, 196, 0.16));
+  filter: blur(8px);
+  opacity: 0.8;
+}
+
+.login-screen::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 42vh;
+  background:
+    linear-gradient(180deg, transparent, rgba(8, 13, 24, 0.38)),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 72px);
+  pointer-events: none;
 }
 
 .login-box {
-  width: 100%;
-  max-width: 400px;
-  padding: 42px 34px;
+  width: min(420px, 100%);
+  margin-top: 76px;
+  padding: 82px 28px 30px;
+  border-radius: 34px;
   text-align: center;
-  border-radius: 28px;
+  overflow: visible;
+  isolation: isolate;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.24), rgba(255,255,255,0.08)),
+    radial-gradient(circle at 18% 0%, rgba(255, 221, 173, 0.26), transparent 34%);
+  border-color: rgba(255,255,255,0.26);
 }
 
-.login-box h2 {
-  color: var(--text-main);
-  margin-bottom: 10px;
-  font-size: 1.7rem;
+.login-box::before {
+  content: "";
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  left: -96px;
+  top: -112px;
+  border-radius: 44% 56% 52% 48%;
+  background: linear-gradient(135deg, rgba(255,180,111,0.38), rgba(116,223,186,0.18));
+}
+
+.login-cat {
+  position: absolute;
+  left: 50%;
+  top: -108px;
+  z-index: 2;
+  width: min(280px, 78vw);
+  transform: translateX(-50%);
+  pointer-events: none;
+  user-select: none;
+}
+
+.login-box h1 {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 10px;
+  font-size: 2.18rem;
+  letter-spacing: -0.06em;
+  text-shadow: 0 10px 28px rgba(0,0,0,0.18);
 }
 
 .login-box p {
-  color: var(--text-soft);
-  font-size: 0.92rem;
-  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+  margin: 0 0 22px;
+  color: var(--soft);
+  line-height: 1.7;
+  font-size: 0.96rem;
 }
 
-.login-box input {
-  width: 100%;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.12);
-  color: var(--text-main);
-  border-radius: 14px;
-  padding: 14px;
-  font-size: 1rem;
-  text-align: center;
-  outline: none;
-  margin-bottom: 12px;
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-}
-
-.login-box input::placeholder { color: rgba(251,247,253,0.48); }
-
-.login-box input:focus {
-  border-color: rgba(255,255,255,0.34);
-  background: rgba(255,255,255,0.16);
-  box-shadow: 0 0 0 4px rgba(255,255,255,0.08);
-}
-
-.login-box button {
-  width: 100%;
-  background: linear-gradient(135deg, var(--warm-1), var(--warm-2));
-  color: var(--text-dark);
-  border: none;
-  border-radius: 14px;
-  padding: 13px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 16px 32px rgba(255, 186, 136, 0.24);
-}
-
-.login-box button:hover { transform: translateY(-1px); }
-
-.login-error {
-  color: #ffd6d6;
-  font-size: 0.8rem;
-  margin-top: 8px;
+#authIntro {
   display: none;
 }
 
-.loading-screen {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 90vh;
-  color: #fff;
+.auth-tabs {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 5px;
+  margin: 0 0 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+.auth-tabs button {
+  border: 0;
+  min-height: 38px;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--soft);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.auth-tabs button.active {
+  color: var(--dark-text);
+  background: linear-gradient(135deg, var(--warm-a), var(--warm-b));
+  box-shadow: 0 10px 22px rgba(255, 190, 138, 0.22);
+}
+
+.login-box input {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 15px 16px;
+  margin-top: 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.1);
+  color: var(--ink);
+  text-align: center;
+  outline: none;
   font-size: 1rem;
 }
 
-.header {
-  margin-bottom: 16px;
-  padding: 28px;
-  border-radius: 32px;
-  position: relative;
-  overflow: hidden;
+.login-box input::placeholder { color: var(--dim); }
+
+.login-box input:focus {
+  border-color: rgba(255,255,255,0.3);
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.06);
 }
 
-.header::after {
+.btn {
+  border: none;
+  cursor: pointer;
+  border-radius: 16px;
+  min-height: 46px;
+  padding: 12px 18px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+
+.btn:hover { transform: translateY(-1px); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--warm-a), var(--warm-b));
+  color: var(--dark-text);
+  box-shadow: 0 14px 28px rgba(255, 190, 138, 0.28);
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.08);
+  color: var(--ink);
+  border: 1px solid rgba(255,255,255,0.14);
+}
+
+.login-box .btn {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.login-error {
+  display: none;
+  margin-top: 10px;
+  color: #ffd7d7;
+  font-size: 0.84rem;
+}
+
+.loading-screen {
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.app-shell {
+  width: 100vw;
+  max-width: none;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+  padding: 0;
+  border-radius: 0;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06)),
+    radial-gradient(circle at 16% 10%, rgba(255, 180, 111, 0.13), transparent 32%),
+    radial-gradient(circle at 86% 18%, rgba(116, 223, 186, 0.12), transparent 28%);
+  border: 0;
+  box-shadow: var(--shadow-main);
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 8px;
+  overflow: hidden;
+  backdrop-filter: blur(28px) saturate(148%);
+}
+
+.app-shell::before {
   content: "";
   position: absolute;
-  right: -46px;
-  bottom: -58px;
-  width: 240px;
-  height: 240px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 65%);
+  inset: -40% -25% auto auto;
+  width: 430px;
+  height: 430px;
+  border-radius: 46% 54% 50% 50%;
+  background:
+    radial-gradient(circle at 36% 34%, rgba(255,255,255,0.18), transparent 18%),
+    linear-gradient(135deg, var(--mood-bg-a), var(--mood-bg-b));
+  filter: blur(18px);
+  opacity: 0.36;
+  pointer-events: none;
 }
 
-.header-inner {
+.app-shell::after {
+  content: "ฅ";
+  position: absolute;
+  right: 22px;
+  bottom: 14px;
+  font-size: 2.6rem;
+  line-height: 1;
+  color: rgba(255,255,255,0.18);
+  pointer-events: none;
+}
+
+.app-cat {
+  position: absolute;
+  right: 18px;
+  top: 70px;
+  z-index: 3;
+  width: 116px;
+  pointer-events: none;
+  filter: drop-shadow(0 18px 28px rgba(0,0,0,0.22));
+  animation: catFloat 5.8s ease-in-out infinite;
+}
+
+.cat-paws {
+  position: absolute;
+  right: 110px;
+  top: 126px;
+  z-index: 2;
+  display: flex;
+  gap: 8px;
+  transform: rotate(-10deg);
+  pointer-events: none;
+}
+
+.cat-paws span {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255, 244, 220, 0.22);
+  box-shadow:
+    7px -5px 0 -4px rgba(255, 244, 220, 0.42),
+    -6px -4px 0 -5px rgba(255, 244, 220, 0.34),
+    0 8px 18px rgba(0,0,0,0.10);
+}
+
+.topbar {
   position: relative;
   z-index: 1;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 0;
+  padding: 14px 14px 0;
 }
 
-.hero-copy { max-width: 760px; }
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.brand small {
+  color: var(--dim);
+  letter-spacing: 0.12em;
+  font-size: 0.68rem;
+}
+
+.brand strong {
+  font-size: 1.18rem;
+  letter-spacing: -0.03em;
+  text-shadow: 0 12px 30px rgba(0,0,0,0.18);
+}
+
+.sync-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--soft);
+  font-size: 0.8rem;
+}
+
+.sync-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.sync-dot.online { background: #85f0c0; }
+.sync-dot.saving { background: #ffd188; }
+.sync-dot.offline { background: #ff9ca6; }
+
+.route-nav {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 0;
+  padding: 0 14px;
+}
+
+.route-link {
+  min-width: 0;
+  padding: 9px 8px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: linear-gradient(145deg, rgba(255,255,255,0.13), rgba(255,255,255,0.05));
+  color: var(--soft);
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.route-link.active {
+  color: var(--dark-text);
+  border-color: transparent;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255,255,255,0.52), transparent 32%),
+    linear-gradient(135deg, color-mix(in srgb, var(--mood-accent), #fff 58%), var(--mood-accent));
+  box-shadow: 0 16px 32px var(--mood-accent-soft), inset 0 1px 0 rgba(255,255,255,0.34);
+}
+
+.route-link small {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.64rem;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.hero {
+  display: none;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  right: -40px;
+  top: -24px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 66%);
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(250px, 0.8fr);
+  gap: 14px;
+}
 
 .hero-tag {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 14px;
+  padding: 7px 12px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: var(--text-main);
-  font-size: 0.78rem;
-  margin-bottom: 16px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--soft);
+  font-size: 0.76rem;
+  margin-bottom: 12px;
 }
 
-.header h1 {
-  font-size: 3.15rem;
-  line-height: 1.02;
-  margin-bottom: 14px;
-  color: var(--text-main);
+.hero h2 {
+  margin: 0 0 8px;
+  font-size: 1.7rem;
+  line-height: 1.06;
   letter-spacing: -0.06em;
 }
 
-.header .subtitle {
-  font-size: 1rem;
-  line-height: 1.75;
-  color: var(--text-soft);
-  max-width: 640px;
+.hero p {
+  margin: 0;
+  color: var(--soft);
+  line-height: 1.6;
+  font-size: 0.9rem;
+  max-width: 720px;
 }
 
 .hero-actions {
   display: flex;
-  gap: 12px;
-  margin-top: 24px;
+  gap: 10px;
   flex-wrap: wrap;
+  margin-top: 12px;
 }
 
-.hero-btn {
-  padding: 13px 20px;
-  border-radius: 18px;
-  font-size: 0.92rem;
-  font-weight: 700;
-  border: 1px solid rgba(255,255,255,0.16);
-}
-
-.hero-btn.primary {
-  background: linear-gradient(135deg, var(--warm-1), var(--warm-2));
-  color: var(--text-dark);
-  box-shadow: 0 16px 30px rgba(255, 186, 136, 0.24);
-}
-
-.hero-btn.secondary {
-  background: rgba(255,255,255,0.08);
-  color: var(--text-main);
-}
-
-.hero-panel {
-  min-width: 280px;
-  padding: 22px;
-  border-radius: 26px;
+.hero-meta {
+  padding: 18px;
+  border-radius: 24px;
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.14);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+  display: grid;
+  gap: 14px;
+  align-content: start;
 }
 
-.hero-panel .small-label {
-  font-size: 0.78rem;
-  color: var(--text-soft);
-  margin-bottom: 8px;
+.hero-meta .meta-label {
+  color: var(--soft);
+  font-size: 0.82rem;
 }
 
-.hero-panel .big-number {
-  font-size: 2.7rem;
+.hero-meta .meta-value {
+  font-size: 2rem;
   font-weight: 800;
-  color: var(--text-main);
   letter-spacing: -0.05em;
 }
 
-.hero-panel .small-copy {
-  margin-top: 8px;
-  font-size: 0.88rem;
-  line-height: 1.6;
-  color: var(--text-soft);
+.hero-meta .meta-copy {
+  color: var(--soft);
+  line-height: 1.55;
+  font-size: 0.82rem;
 }
 
-.sync-wrap {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 12px;
-}
-
-.sync-bar {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 999px;
-  padding: 10px 14px;
-  text-align: right;
-  backdrop-filter: blur(12px);
-}
-
-.sync-bar .sync-status {
-  color: var(--text-main);
-  font-size: 0.78rem;
-  font-weight: 700;
-}
-
-.sync-bar .sync-dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-left: 4px;
-}
-
-.sync-dot.online { background: #7df3bb; }
-.sync-dot.saving { background: #ffd284; }
-.sync-dot.offline { background: #ff8f9f; }
-
-.section-title {
-  margin: 18px 0 10px;
-  color: rgba(251,247,253,0.86);
-  font-size: 0.9rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.setup-bar {
-  border-radius: 28px;
-  padding: 18px;
-  margin-bottom: 14px;
+.overview-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(120px, 1fr)) auto auto;
-  align-items: end;
-  gap: 12px;
-}
-
-.setup-bar label {
-  font-size: 0.78rem;
-  color: var(--text-soft);
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.setup-bar input {
-  width: 100%;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.1);
-  color: var(--text-main);
-  border-radius: 14px;
-  padding: 10px 12px;
-  font-size: 0.9rem;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-}
-
-.setup-bar input:focus {
-  border-color: rgba(255,255,255,0.26);
-  background: rgba(255,255,255,0.14);
-  box-shadow: 0 0 0 4px rgba(255,255,255,0.06);
-}
-
-.setup-bar .sw { width: 100%; }
-
-.btn {
-  cursor: pointer;
-  border: none;
-  border-radius: 14px;
-  padding: 10px 18px;
-  font-size: 0.84rem;
-  font-weight: 700;
-  min-height: 44px;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--warm-1), var(--warm-2));
-  color: var(--text-dark);
-  box-shadow: 0 16px 30px rgba(255, 186, 136, 0.22);
-}
-
-.btn-secondary {
-  background: rgba(255,255,255,0.08);
-  color: var(--text-main);
-  border: 1px solid rgba(255,255,255,0.16);
-}
-
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 16px;
   margin-bottom: 16px;
 }
 
-.stat-card {
-  min-width: 0;
-  border-radius: 26px;
-  padding: 20px 18px;
-  text-align: left;
-  position: relative;
-  overflow: hidden;
+.panel {
+  border-radius: 28px;
+  padding: 18px;
 }
 
-.stat-card::after {
-  content: "";
-  position: absolute;
-  right: -16px;
-  bottom: -16px;
-  width: 88px;
-  height: 88px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.16), transparent 68%);
-}
-
-.stat-card .label {
-  font-size: 0.78rem;
-  color: rgba(251,247,253,0.7);
+.section-kicker {
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.72rem;
   margin-bottom: 10px;
 }
 
-.stat-card .value {
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--text-main);
-  letter-spacing: -0.05em;
-}
-
-.stat-card .value.green { color: var(--success); }
-.stat-card .value.red { color: var(--danger); }
-.stat-card .value.blue { color: #e6fff0; }
-.stat-card .unit {
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: var(--text-dim);
-}
-
-.overall-progress {
-  border-radius: 28px;
-  padding: 18px;
-  margin-bottom: 14px;
-}
-
-.progress-bar-c {
-  width: 100%;
-  height: 18px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 999px;
-  overflow: hidden;
-  margin-top: 10px;
-  padding: 2px;
-}
-
-.progress-bar-f {
-  height: 100%;
-  background: linear-gradient(90deg, var(--mint-1), var(--mint-2));
-  border-radius: 999px;
-  transition: width 0.4s;
+.week-header {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  padding-right: 10px;
-  color: var(--text-dark);
-  font-size: 0.72rem;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.15), rgba(255,255,255,0.06));
+  border: 1px solid rgba(255,255,255,0.16);
+  margin-bottom: 10px;
+}
+
+.week-arrow {
+  width: 34px;
+  height: 34px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.08);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
   font-weight: 800;
 }
 
-.progress-label {
-  font-size: 0.85rem;
-  color: var(--text-main);
+.week-summary {
+  text-align: center;
+}
+
+.week-summary strong {
+  display: block;
+  font-size: 1.2rem;
+}
+
+.week-summary span {
+  color: var(--soft);
+  font-size: 0.82rem;
+}
+
+.swipe-hint {
+  margin-bottom: 12px;
+  color: var(--dim);
+  font-size: 0.78rem;
+}
+
+.days-strip {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  touch-action: pan-y;
+}
+
+.day-card {
+  min-width: 0;
+  padding: 8px 6px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05));
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.day-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,0.18);
+}
+
+.day-card.active {
+  border-color: rgba(255,255,255,0.26);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 12px 22px rgba(0,0,0,0.14);
+}
+
+.day-card .day-top {
+  color: var(--soft);
+  font-size: 0.74rem;
+}
+
+.day-card .day-date {
+  margin-top: 5px;
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+
+.day-card .day-state {
+  margin-top: 8px;
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.86);
+}
+
+.day-card .day-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin: 8px auto 0;
+  background: rgba(255,255,255,0.2);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.mini-stat {
+  min-width: 0;
+  padding: 10px;
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05));
+  border: 1px solid rgba(255,255,255,0.14);
+}
+
+.mini-stat .label {
+  color: var(--dim);
+  font-size: 0.72rem;
+  margin-bottom: 8px;
+}
+
+.mini-stat .value {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.edit-layout {
+  display: grid;
+  grid-template-columns: 1.08fr 0.92fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.single-panel {
+  display: grid;
+  gap: 0;
+  height: 100%;
+  min-height: 0;
+}
+
+.edit-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px 28px 0 0;
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,0.20);
+  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,0.24);
+  min-height: 100%;
+}
+
+.edit-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 16% 12%, rgba(255,255,255,0.24), transparent 24%),
+    radial-gradient(circle at 82% 20%, rgba(255,255,255,0.12), transparent 22%),
+    linear-gradient(145deg, rgba(255,255,255,0.10), transparent 46%);
+  pointer-events: none;
+}
+
+.edit-card::after {
+  content: "♪  ฅ";
+  position: absolute;
+  right: 16px;
+  top: 12px;
+  color: rgba(255,255,255,0.20);
+  font-size: 1.4rem;
+  letter-spacing: 0.18em;
+  pointer-events: none;
+}
+
+.mood-bloom {
+  background:
+    radial-gradient(circle at 12% 12%, rgba(255,231,189,0.34), transparent 28%),
+    linear-gradient(120deg, #45685f 0%, #3f7a6e 46%, #193d43 100%);
+  border-color: rgba(199,241,220,0.44);
+  box-shadow: 0 0 0 1px rgba(199,241,220,0.18), 0 24px 54px rgba(82, 190, 140, 0.26);
+}
+
+.mood-steady {
+  background:
+    radial-gradient(circle at 14% 16%, rgba(216,239,255,0.28), transparent 28%),
+    linear-gradient(120deg, #496f88 0%, #355772 46%, #1d354c 100%);
+  border-color: rgba(221,233,248,0.38);
+  box-shadow: 0 0 0 1px rgba(221,233,248,0.14), 0 24px 54px rgba(91, 129, 168, 0.24);
+}
+
+.mood-warning {
+  background:
+    radial-gradient(circle at 12% 14%, rgba(255,212,168,0.34), transparent 28%),
+    linear-gradient(120deg, #9b6548 0%, #7a4c4d 48%, #412c3c 100%);
+  border-color: rgba(255,213,174,0.48);
+  box-shadow: 0 0 0 1px rgba(255,213,174,0.18), 0 24px 54px rgba(255, 155, 94, 0.26);
+}
+
+.mood-reset {
+  background:
+    radial-gradient(circle at 14% 16%, rgba(224,213,241,0.30), transparent 28%),
+    linear-gradient(120deg, #695f83 0%, #514b6b 48%, #2d344e 100%);
+  border-color: rgba(224,213,241,0.42);
+  box-shadow: 0 0 0 1px rgba(224,213,241,0.16), 0 24px 54px rgba(143, 119, 190, 0.25);
+}
+
+.mood-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.18);
+  font-size: 0.76rem;
   font-weight: 700;
 }
 
-.trend-card {
-  border-radius: 28px;
-  padding: 18px;
-  margin-bottom: 14px;
+.mood-meter {
+  position: relative;
+  z-index: 1;
+  height: 8px;
+  border-radius: 999px;
+  margin: 8px 0 10px;
+  background: rgba(255,255,255,0.12);
+  overflow: hidden;
 }
 
-.trend-head {
+.mood-meter i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--mood-accent), #fff 50%), var(--mood-accent));
+  box-shadow: 0 0 18px var(--mood-accent-soft);
+  transition: width 0.28s ease;
+}
+
+.mood-chip i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.mood-chip.bloom i { background: #c7f1dc; box-shadow: 0 0 14px rgba(199,241,220,0.8); }
+.mood-chip.steady i { background: #dde9f8; box-shadow: 0 0 14px rgba(221,233,248,0.8); }
+.mood-chip.warning i { background: #ffd5ae; box-shadow: 0 0 14px rgba(255,213,174,0.8); }
+.mood-chip.reset i { background: #e0d5f1; box-shadow: 0 0 14px rgba(224,213,241,0.8); }
+
+.edit-card h3 {
+  position: relative;
+  z-index: 1;
+  margin: 10px 0 6px;
+  font-size: 1.18rem;
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.edit-copy {
+  position: relative;
+  z-index: 1;
+  color: rgba(255,248,243,0.78);
+  line-height: 1.45;
+  margin-bottom: 10px;
+  font-size: 0.8rem;
+  max-width: 520px;
+  display: none;
+}
+
+.field-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.field {
+  padding: 8px;
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+  border: 1px solid rgba(255,255,255,0.14);
+}
+
+.field label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.68rem;
+  color: rgba(255,248,243,0.72);
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  border: none;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.16), rgba(255,255,255,0.07));
+  color: var(--ink);
+  border-radius: 14px;
+  min-height: 38px;
+  padding: 9px 10px;
+  font-size: 0.86rem;
+  outline: none;
+  resize: none;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.field textarea { min-height: 42px; }
+
+.field textarea {
+  line-height: 1.45;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--mood-accent), #fff 18%) rgba(255,255,255,0.08);
+}
+
+.field textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.field textarea::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+}
+
+.field textarea::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--mood-accent), #fff 44%), var(--mood-accent));
+}
+
+.field input::placeholder,
+.field textarea::placeholder { color: rgba(255,248,243,0.48); }
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: color-mix(in srgb, var(--mood-accent), #fff 26%);
+  box-shadow: 0 0 0 3px var(--mood-accent-soft), inset 0 1px 0 rgba(255,255,255,0.14);
+}
+
+.date-field {
+  position: relative;
+}
+
+.date-field::after {
+  content: "⌁";
+  position: absolute;
+  right: 18px;
+  bottom: 16px;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--dark-text);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--mood-accent), #fff 58%), var(--mood-accent));
+  box-shadow: 0 10px 20px var(--mood-accent-soft);
+  pointer-events: none;
+  font-weight: 900;
+}
+
+.date-field input {
+  min-height: 44px;
+  padding-right: 42px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color-scheme: dark;
+  cursor: pointer;
+}
+
+.field.full { grid-column: 1 / -1; }
+.field.compact-span { grid-column: span 2; }
+
+.save-field {
+  min-height: 62px;
+}
+
+.save-field .btn {
+  min-height: 50px;
+  border-radius: 18px;
+}
+
+.check-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.choice {
+  padding: 7px 6px;
+  border-radius: 8px;
+  text-align: center;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  cursor: pointer;
+  font-size: 0.86rem;
+  transition: transform 0.16s ease, border-color 0.16s ease;
+}
+
+.choice.active {
+  color: var(--dark-text);
+  background: linear-gradient(135deg, var(--warm-a), var(--warm-b));
+  border-color: transparent;
+  box-shadow: 0 12px 24px rgba(255, 194, 141, 0.26);
+}
+
+.exercise-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+  border: 1px solid rgba(255,255,255,0.14);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.exercise-toggle .tick {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.24);
+  display: inline-grid;
+  place-items: center;
+  font-size: 0.8rem;
+}
+
+.exercise-toggle.active .tick {
+  border-color: transparent;
+  color: var(--dark-text);
+  background: linear-gradient(135deg, var(--mint-a), var(--mint-b));
+}
+
+.edit-actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.edit-note {
+  color: rgba(255,248,243,0.72);
+  font-size: 0.8rem;
+  display: none;
+}
+
+.aside-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.goal-card,
+.phase-card,
+.setup-card,
+.history-card,
+.chart-card {
+  border-radius: 30px;
+  padding: 18px;
+  overflow: hidden;
+}
+
+.route-card {
+  border-radius: 28px 28px 0 0;
+  padding: 16px;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.route-card::after,
+.history-card::after,
+.setup-card::after {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  right: -70px;
+  top: -86px;
+  border-radius: 46% 54% 52% 48%;
+  background: linear-gradient(135deg, rgba(255,180,111,0.20), rgba(116,223,186,0.13));
+  pointer-events: none;
+}
+
+.history-card,
+.setup-card {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 28px 28px 0 0;
+}
+
+.inside-stack {
+  display: grid;
+  gap: 10px;
+  min-height: 0;
+}
+
+.week-stack {
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: start;
+}
+
+.trend-stack {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.goal-card h4,
+.phase-card h4,
+.setup-card h4,
+.history-card h4,
+.chart-card h4 {
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+}
+
+.goal-row {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 0.92rem;
+  color: var(--soft);
+}
+
+.progress-shell {
+  height: 12px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  padding: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--warm-a), var(--warm-b));
+  transition: width 0.22s ease;
+}
+
+.phase-track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.phase-pill {
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.phase-pill.active {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.phase-pill strong {
+  display: block;
+  margin-bottom: 0;
+  font-size: 0.78rem;
+  line-height: 1.25;
+}
+
+.phase-pill span {
+  display: none;
+}
+
+.phase-pill em {
+  display: inline-block;
+  margin-top: 5px;
+  font-style: normal;
+  font-size: 0.72rem;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  color: var(--soft);
+}
+
+.setup-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.setup-grid .field {
+  background: rgba(255,255,255,0.06);
+}
+
+.setup-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.chart-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.chart-meta {
+  color: var(--soft);
+  font-size: 0.82rem;
+}
+
+.segmented {
+  display: inline-flex;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.08);
+}
+
+.segmented button {
+  border: none;
+  background: transparent;
+  color: var(--soft);
+  border-radius: 10px;
+  padding: 7px 10px;
+  font-size: 0.76rem;
+  cursor: pointer;
+}
+
+.segmented button.active {
+  background: linear-gradient(135deg, var(--warm-a), var(--warm-b));
+  color: var(--dark-text);
+  font-weight: 800;
+}
+
+.chart-shell {
+  position: relative;
+  height: 170px;
+  border-radius: 8px;
+  background:
+    linear-gradient(to top, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
+    repeating-linear-gradient(to top, rgba(255,255,255,0.08) 0 1px, transparent 1px 44px);
+  overflow: hidden;
+}
+
+.chart-shell svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.chart-bubble {
+  position: absolute;
+  right: 14px;
+  top: 12px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.12);
+  color: var(--ink);
+  font-size: 0.78rem;
+}
+
+.chart-legend {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.legend-left {
+  display: inline-flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--soft);
+  font-size: 0.76rem;
+}
+
+.legend-item i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.history-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 12px;
   margin-bottom: 10px;
 }
 
-.trend-title {
-  font-size: 0.95rem;
-  color: var(--text-main);
+.history-body {
+  display: block;
+  margin-top: 8px;
+}
+
+.history-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  align-items: center;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+}
+
+.history-list {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.history-day {
   font-weight: 800;
 }
 
-.trend-meta {
-  font-size: 0.8rem;
-  color: rgba(251,247,253,0.68);
+.history-main {
+  min-width: 0;
 }
 
-.trend-svg { display: block; width: 100%; height: 200px; }
-.trend-grid { stroke: rgba(255,255,255,0.12); stroke-width: 1; }
-.trend-area { fill: rgba(255, 191, 150, 0.22); }
-.trend-line { fill: none; stroke: #ffd1ae; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-.trend-dot { fill: #ffe0c6; }
-
-.trend-empty {
-  height: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(251,247,253,0.62);
-  font-size: 0.86rem;
-  background: rgba(255,255,255,0.06);
-  border-radius: 18px;
-  border: 1px dashed rgba(255,255,255,0.14);
-}
-
-.trend-axis {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 6px;
-  color: rgba(251,247,253,0.56);
-  font-size: 0.72rem;
-}
-
-.table-wrapper {
-  border-radius: 28px;
-  overflow: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.8rem;
-  min-width: 1240px;
-}
-
-thead th {
-  background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.08));
-  color: var(--text-main);
-  padding: 12px 8px;
-  font-weight: 700;
-  text-align: center;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  backdrop-filter: blur(12px);
-}
-
-thead th:first-child { width: 48px; }
-
-tbody tr { border-bottom: 1px solid rgba(255,255,255,0.08); }
-tbody tr:hover { background: rgba(255,255,255,0.04); }
-tbody tr.week-end { border-bottom: 2px solid rgba(255,255,255,0.14); }
-tbody tr.week-sum { background: rgba(255,255,255,0.08); font-weight: 600; }
-tbody tr.today-row { background: rgba(255, 224, 198, 0.10); }
-tbody tr.week-sum td {
-  padding: 8px;
-  text-align: center;
-  color: rgba(251,247,253,0.78);
-  font-size: 0.75rem;
-}
-
-tbody td {
-  padding: 8px 8px;
-  text-align: center;
-  color: rgba(251,247,253,0.9);
-}
-
-.day-num { font-weight: 800; color: #fff1e3; }
-
-tbody input,
-tbody select {
-  width: 100%;
-  border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 12px;
-  padding: 7px 8px;
+.history-main strong {
+  display: block;
   font-size: 0.78rem;
+}
+
+.history-main span {
+  display: block;
+  color: var(--soft);
+  font-size: 0.68rem;
+  margin-top: 4px;
+  line-height: 1.35;
+}
+
+.history-side {
   text-align: center;
-  outline: none;
-  background: rgba(255,255,255,0.08);
-  color: var(--text-main);
+  color: var(--soft);
+  font-size: 0.68rem;
 }
 
-tbody input:focus,
-tbody select:focus {
-  border-color: rgba(255,255,255,0.26);
-  background: rgba(255,255,255,0.12);
-  box-shadow: 0 0 0 4px rgba(255,255,255,0.06);
-}
-
-.wc { font-weight: 700; font-size: 0.75rem; }
-.wc.pos { color: var(--danger); }
-.wc.neg { color: var(--success); }
-.wc.zero { color: rgba(251,247,253,0.44); }
-
-.ex-check {
-  display: inline-block;
-  width: 30px;
-  height: 30px;
-  line-height: 26px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 0.82rem;
-  user-select: none;
-  border: 2px solid rgba(255,255,255,0.16);
-  background: rgba(255,255,255,0.06);
-  color: rgba(255,255,255,0.4);
-  transition: all 0.15s;
-}
-
-.ex-check.checked {
-  background: linear-gradient(135deg, var(--mint-1), var(--mint-2));
-  border-color: transparent;
-  color: var(--text-dark);
-  box-shadow: 0 10px 24px rgba(143, 242, 200, 0.22);
-}
-
-.week-dots {
-  display: flex;
-  gap: 3px;
-  justify-content: center;
-  align-items: center;
-}
-
-.wd {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.14);
-}
-
-.wd.f { background: #8ff2c8; }
-
-.footer {
+.footer-tip {
+  display: none;
   text-align: center;
-  color: rgba(251,247,253,0.78);
-  font-size: 0.78rem;
-  margin-top: 16px;
+  color: var(--soft);
+  font-size: 0.74rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.footer .tip {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.14);
-  border-radius: 18px;
-  padding: 12px 18px;
-  display: inline-block;
+.route-page {
+  display: none;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+.route-page.active {
+  display: block;
+  height: 100%;
 }
 
 .toast {
   position: fixed;
-  top: 16px;
+  top: 18px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(28, 20, 34, 0.9);
+  background: rgba(25, 20, 31, 0.94);
   color: #fff;
-  padding: 10px 22px;
+  padding: 10px 18px;
   border-radius: 14px;
-  font-size: 0.85rem;
-  z-index: 9999;
-  transition: opacity 0.3s;
+  font-size: 0.84rem;
   box-shadow: var(--shadow-soft);
+  z-index: 9999;
 }
 
-@media (max-width: 1100px) {
-  .header-inner { flex-direction: column; }
-  .hero-panel { width: 100%; }
-  .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .setup-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.date-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(8, 13, 24, 0.42);
+  backdrop-filter: blur(16px);
 }
 
-@media (max-width: 600px) {
-  body { padding: 10px; }
-  .container { padding: 12px; border-radius: 24px; }
-  .login-screen { min-height: calc(100vh - 20px); }
-  .login-box { padding: 28px 20px; border-radius: 22px; }
-  .header { padding: 20px 18px; border-radius: 24px; }
-  .header h1 { font-size: 2.15rem; }
-  .header .subtitle { font-size: 0.88rem; }
-  .hero-actions { gap: 10px; }
-  .hero-btn { width: 100%; text-align: center; }
-  .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .stat-card { padding: 14px; }
-  .stat-card .value { font-size: 1.3rem; }
-  .stat-card .label { font-size: 0.68rem; }
-  .setup-bar { grid-template-columns: 1fr; }
-  .btn { width: 100%; }
-  table { font-size: 0.72rem; min-width: 1180px; }
-  thead th, tbody td { padding: 4px 3px; }
+.date-modal.show {
+  display: flex;
+}
+
+.date-panel {
+  width: min(420px, 100%);
+  border-radius: 28px;
+  padding: 16px;
+  background:
+    radial-gradient(circle at 18% 10%, rgba(255,255,255,0.18), transparent 30%),
+    linear-gradient(145deg, rgba(255,255,255,0.20), rgba(255,255,255,0.08)),
+    linear-gradient(135deg, var(--mood-page-b), var(--mood-page-c));
+  border: 1px solid rgba(255,255,255,0.22);
+  box-shadow: 0 28px 80px rgba(8,13,24,0.42), inset 0 1px 0 rgba(255,255,255,0.20);
+}
+
+.date-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.date-panel-title {
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.date-panel-sub {
+  color: var(--soft);
+  font-size: 0.72rem;
+  margin-top: 2px;
+}
+
+.date-icon-btn {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 16px;
+  color: var(--ink);
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.16);
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+
+.date-weekdays,
+.date-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.date-weekdays {
+  margin-bottom: 6px;
+  color: var(--dim);
+  font-size: 0.68rem;
+  text-align: center;
+}
+
+.date-day {
+  min-width: 0;
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 14px;
+  color: var(--ink);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.10);
+  font-weight: 800;
+}
+
+.date-day.muted {
+  opacity: 0.32;
+}
+
+.date-day.active {
+  color: var(--dark-text);
+  background:
+    radial-gradient(circle at 28% 22%, rgba(255,255,255,0.48), transparent 32%),
+    linear-gradient(135deg, color-mix(in srgb, var(--mood-accent), #fff 58%), var(--mood-accent));
+  box-shadow: 0 12px 24px var(--mood-accent-soft);
+}
+
+.date-panel-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+@media (max-width: 1050px) {
+  .hero-inner,
+  .overview-grid,
+  .edit-layout,
+  .charts-grid,
+  .week-stack,
+  .trend-stack {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  body { padding: 0; }
+  body::before { width: 70vw; height: 70vw; left: -30vw; top: -28vw; }
+  body::after { width: 74vw; height: 74vw; right: -34vw; bottom: -28vw; }
+  .ambient-cat { width: 82px; height: 82px; right: 10px; top: 74px; opacity: 0.18; }
+  .app-cat { width: 82px; right: 8px; top: 62px; opacity: 0.92; }
+  .cat-paws { right: 78px; top: 112px; gap: 5px; }
+  .cat-paws span { width: 13px; height: 13px; }
+  .login-screen { padding: 12px; align-items: center; }
+  .login-box { margin-top: 70px; padding: 76px 22px 24px; border-radius: 30px; }
+  .login-cat { top: -94px; width: min(250px, 76vw); }
+  .app-shell { padding: 0; border-radius: 0; height: 100dvh; }
+  .topbar { padding: 12px 12px 0; }
+  .route-nav { padding: 0 12px; }
+  .topbar { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .brand strong { font-size: 1rem; }
+  .brand small { font-size: 0.58rem; }
+  .sync-pill { padding: 7px 10px; font-size: 0.72rem; }
+  .hero { padding: 14px; border-radius: 24px; }
+  .hero h2 { font-size: 1.34rem; }
+  .hero p { font-size: 0.82rem; }
+  .hero-actions .btn { flex: 1 1 100%; }
+  .route-nav { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+  .route-link { padding: 8px 4px; font-size: 0.74rem; border-radius: 16px; }
+  .route-link small { display: none; }
+  .days-strip { gap: 6px; }
+  .day-card { padding: 6px 2px; border-radius: 8px; }
+  .day-card .day-date { font-size: 0.8rem; }
+  .day-card .day-state { display: none; }
+  .day-card .day-dot { margin-top: 5px; }
+  .stats-grid,
+  .setup-grid,
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  .field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .field.compact-span { grid-column: span 1; }
+  .field.full { grid-column: 1 / -1; }
+  .field { padding: 7px; }
+  .edit-card,
+  .route-card,
+  .setup-card,
+  .history-card { border-radius: 24px 24px 0 0; }
+  .chart-card { border-radius: 24px; }
+  .field label { font-size: 0.62rem; }
+  .field input, .field select, .field textarea { min-height: 36px; padding: 7px 8px; font-size: 0.8rem; }
+  .date-field input { min-height: 42px; padding-right: 40px; }
+  .date-field::after { right: 14px; bottom: 13px; width: 22px; height: 22px; }
+  .check-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
+  .choice { padding: 5px 2px; font-size: 0.72rem; }
+  .choice div:last-child { display: none; }
+  .edit-card h3 { font-size: 1rem; }
+  .mood-chip { padding: 6px 9px; font-size: 0.68rem; }
+  .mini-stat { padding: 8px; }
+  .mini-stat .value { font-size: 0.96rem; }
+  #page-week .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #page-week .goal-card,
+  #page-week .phase-card { display: none; }
+  .week-stack { grid-template-columns: 1fr; }
+  .trend-stack { grid-template-columns: 1fr; gap: 8px; }
+  .chart-shell { height: 116px; }
+  .chart-head { margin-bottom: 6px; }
+  .chart-card h4, .route-card h4, .history-card h4, .setup-card h4 { margin-bottom: 6px; }
+  .segmented button { padding: 5px 7px; font-size: 0.68rem; }
+  .history-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .history-row { padding: 6px; }
+  .history-main span { display: none; }
+  .settings-mirror { display: none; }
+  .setup-actions .btn { min-height: 38px; padding: 8px 12px; }
+  .footer-tip { display: none; }
 }
 </style>
 </head>
 <body>
 
+<div class="ambient-cat" aria-hidden="true"></div>
+
 <div id="loginScreen" class="login-screen">
   <div class="login-box glass-card">
-    <h2>Body Bloom</h2>
-    <p>输入访问密码，进入你的减脂记录日记</p>
-    <input type="password" id="loginPwd" placeholder="输入密码" onkeypress="if(event.key==='Enter')doLogin()">
-    <button onclick="doLogin()">进入记录页</button>
-    <div id="loginError" class="login-error">密码错误，请重试</div>
+    <img class="login-cat" src="assets/login-cat.svg" alt="">
+    <h1>祝你瘦成一道闪电⚡</h1>
+    <p id="authIntro">登录你的减脂记录日记，每个账号都有独立数据。</p>
+    <div class="auth-tabs">
+      <button class="active" type="button" id="loginTab" onclick="setAuthMode('login')">登录</button>
+      <button type="button" id="registerTab" onclick="setAuthMode('register')">注册</button>
+    </div>
+    <input type="text" id="loginName" placeholder="用户名" autocomplete="username" onkeypress="if(event.key==='Enter')handleAuthSubmit()">
+    <input type="password" id="loginPwd" placeholder="密码" autocomplete="current-password" onkeypress="if(event.key==='Enter')handleAuthSubmit()">
+    <input class="hidden" type="password" id="registerPwd2" placeholder="再次输入密码" autocomplete="new-password" onkeypress="if(event.key==='Enter')handleAuthSubmit()">
+    <input class="hidden" type="text" id="displayName" placeholder="昵称，可不填" onkeypress="if(event.key==='Enter')handleAuthSubmit()">
+    <button class="btn btn-primary" id="authSubmitBtn" onclick="handleAuthSubmit()">登录进入</button>
+    <div id="loginError" class="login-error">账号或密码错误，请重试</div>
   </div>
 </div>
 
-<div id="loadingScreen" class="loading-screen" style="display:none">
+<div id="loadingScreen" class="loading-screen hidden">
   <div>正在加载数据...</div>
 </div>
 
-<div id="mainApp" class="container" style="display:none">
-  <div class="header glass-card">
-    <div class="header-inner">
-      <div class="hero-copy">
-        <div class="hero-tag">卡片氛围 · 高级减脂日记</div>
-        <h1>不是工具页，<br>而是看起来就很贵的减脂日记</h1>
-        <div class="subtitle">把每天的晨重、晚重、体脂率和运动记录，做成更有质感、更愿意坚持打开的页面。你不是在填表，而是在经营自己的变化。</div>
+<div id="mainApp" class="app-shell hidden">
+  <img class="app-cat" src="assets/login-cat.svg" alt="">
+  <div class="cat-paws" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div class="topbar">
+    <div class="brand">
+      <small>BODY BLOOM · WEEKLY FLOW</small>
+      <strong>这次先完成这一周，不先看 100 天</strong>
+    </div>
+    <div class="sync-pill">
+      <span id="syncText">已连接</span>
+      <span class="sync-dot online" id="syncDot"></span>
+    </div>
+  </div>
+
+  <nav class="route-nav" id="routeNav">
+    <button class="route-link active" type="button" onclick="navigateTo('today')">今日<small>快速记录</small></button>
+    <button class="route-link" type="button" onclick="navigateTo('week')">本周<small>切周查看</small></button>
+    <button class="route-link" type="button" onclick="navigateTo('trends')">趋势<small>体重体脂</small></button>
+    <button class="route-link" type="button" onclick="navigateTo('history')">历史<small>按周回看</small></button>
+    <button class="route-link" type="button" onclick="navigateTo('settings')">设置<small>基础信息</small></button>
+  </nav>
+
+  <section class="hero glass-card">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-tag">周计划型 · 左右滑切周 · 动态情绪卡</div>
+        <h2>今天先打卡，再看趋势。<br>首页只服务本周和今天。</h2>
+        <p>我把之前那张很长的总表收起来了。现在打开首页，先看本周 7 天，再点今天这张卡去录入。曲线图单独放成轻量趋势区，手机上会更好用。</p>
         <div class="hero-actions">
-          <div class="hero-btn primary">继续今日记录</div>
-          <div class="hero-btn secondary">查看 100 天计划</div>
+          <button class="btn btn-primary" type="button" onclick="navigateTo('today')">进入今日记录</button>
+          <button class="btn btn-secondary" type="button" onclick="navigateTo('trends')">查看趋势页面</button>
         </div>
       </div>
-      <div class="hero-panel">
-        <div class="small-label">本次挑战</div>
-        <div class="big-number">100 Days</div>
-        <div class="small-copy">持续记录晨晚体重、体脂率和运动，让减脂过程更清晰，也更有成就感。</div>
+      <div class="hero-meta">
+        <div>
+          <div class="meta-label">当前挑战</div>
+          <div class="meta-value">100 Days</div>
+        </div>
+        <div class="meta-copy" id="heroMetaCopy">把晨重、晚重、体脂率和运动记录做成一周一周能坚持打开的减脂页。</div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="sync-wrap">
-    <div class="sync-bar">
-      <span class="sync-status" id="syncText">已连接 <span class="sync-dot online" id="syncDot"></span></span>
+  <section class="route-page" id="page-week">
+    <section class="single-panel">
+      <div class="route-card glass-card">
+        <div class="inside-stack week-stack">
+          <div>
+            <div class="section-kicker">This Week</div>
+            <div class="week-header">
+              <button class="week-arrow" type="button" onclick="changeWeek(-1)">‹</button>
+              <div class="week-summary">
+                <strong id="weekRange">7月1日 - 7月7日</strong>
+                <span id="weekLabel">第 1 周 · 建立习惯</span>
+              </div>
+              <button class="week-arrow" type="button" onclick="changeWeek(1)">›</button>
+            </div>
+            <div class="swipe-hint">左右滑切换周，点某一天进入当天编辑。</div>
+            <div class="days-strip" id="daysStrip"></div>
+          </div>
+
+          <div>
+            <div class="section-kicker">Weekly Snapshot</div>
+            <div class="stats-grid">
+              <div class="mini-stat">
+                <div class="label">当前体重</div>
+                <div class="value" id="currentWeight">—</div>
+              </div>
+              <div class="mini-stat">
+                <div class="label">体脂率</div>
+                <div class="value" id="bodyFatStat">—</div>
+              </div>
+              <div class="mini-stat">
+                <div class="label">距离目标</div>
+                <div class="value" id="toGoal">—</div>
+              </div>
+              <div class="mini-stat">
+                <div class="label">本周完成</div>
+                <div class="value" id="weekCompletion">0 / 7</div>
+              </div>
+              <div class="mini-stat">
+                <div class="label">晨晚差</div>
+                <div class="value" id="dailyCompare">—</div>
+              </div>
+              <div class="mini-stat">
+                <div class="label">累计减重</div>
+                <div class="value" id="totalLoss">—</div>
+              </div>
+              <div class="mini-stat">
+                <div class="label">运动天数</div>
+                <div class="value" id="exerciseDays">0</div>
+              </div>
+              <div class="mini-stat">
+                <div class="label">坚持天数</div>
+                <div class="value" id="totalDays">0 / 100</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="goal-card" style="padding:0;background:none;border:none;box-shadow:none;backdrop-filter:none;">
+            <div class="section-kicker">Challenge Progress</div>
+            <h4>100 天挑战进度</h4>
+            <div class="goal-row"><span>当前进度</span><strong id="progressLabel">0%</strong></div>
+            <div class="progress-shell"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+            <div class="goal-row"><span>起始体重</span><strong id="startWeightLabel">—</strong></div>
+            <div class="goal-row"><span>目标体重</span><strong id="goalWeightLabel">—</strong></div>
+          </div>
+
+          <div class="phase-card" style="padding:0;background:none;border:none;box-shadow:none;backdrop-filter:none;">
+            <div class="section-kicker">Phase</div>
+            <h4>阶段路线</h4>
+            <div class="phase-track" id="phaseTrack"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <section class="route-page active" id="page-today">
+    <section class="single-panel">
+      <div class="edit-card mood-steady" id="todayCard">
+        <div class="mood-chip steady" id="moodChip"><i></i><span>今日状态 · 稳定记录</span></div>
+        <div class="mood-meter" id="moodMeter" aria-hidden="true"><i></i></div>
+        <h3 id="todayHeadline">今天很稳，继续按节奏做。</h3>
+        <div class="edit-copy" id="todayCopy">今天不是看总表，而是先把这一张卡完成。你的晨重、晚重、体脂率和运动都只改当天这一条，手机上会更轻松。</div>
+
+        <div class="field-grid">
+          <div class="field date-field">
+            <label>日期</label>
+            <input type="text" id="fieldDate" readonly inputmode="none" onclick="openDatePicker()">
+          </div>
+          <div class="field">
+            <label>访问日</label>
+            <input type="text" id="fieldDayText" disabled>
+          </div>
+          <div class="field">
+            <label>晨重</label>
+            <input type="number" id="fieldMorningWeight" step="0.1" placeholder="例如 59.6">
+          </div>
+          <div class="field">
+            <label>晚重</label>
+            <input type="number" id="fieldEveningWeight" step="0.1" placeholder="例如 60.0">
+          </div>
+          <div class="field">
+            <label>体脂率</label>
+            <input type="number" id="fieldBodyFat" step="0.1" placeholder="例如 29.7">
+          </div>
+          <div class="field">
+            <label>运动时长（分钟）</label>
+            <input type="number" id="fieldDuration" step="5" placeholder="例如 40">
+          </div>
+          <div class="field compact-span">
+            <label>今天有运动吗</label>
+            <div id="exerciseToggle" class="exercise-toggle" onclick="toggleCurrentExercise()">
+              <span class="tick" id="exerciseTick"></span>
+              <span id="exerciseText">今天还没完成运动</span>
+            </div>
+          </div>
+          <div class="field compact-span">
+            <label>运动类型</label>
+            <select id="fieldExerciseType"></select>
+          </div>
+          <div class="field full">
+            <label>心情状态</label>
+            <div class="check-grid" id="moodChoices"></div>
+          </div>
+          <div class="field full">
+            <label>备注</label>
+            <textarea id="fieldNote" placeholder="比如今天吃得更稳、晚餐偏重、运动状态很好..."></textarea>
+          </div>
+          <div class="field full save-field" style="display:flex;align-items:end">
+            <button class="btn btn-primary" style="width:100%" type="button" onclick="saveCurrentDay()">保存今天这张卡</button>
+          </div>
+        </div>
+
+        <div class="edit-actions">
+          <div class="edit-note" id="todayNote">保存后会自动更新这一天、本周完成率和趋势图。</div>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <section class="route-page" id="page-trends">
+    <section class="single-panel">
+      <div class="route-card glass-card">
+        <div class="inside-stack trend-stack">
+          <div>
+            <div class="chart-head">
+              <div>
+                <div class="section-kicker">Weight Trend</div>
+                <h4>体重趋势</h4>
+              </div>
+              <div class="chart-meta" id="weightTrendMeta">最近 4 周</div>
+            </div>
+            <div class="segmented" id="weightRangeTabs"></div>
+            <div class="chart-shell" id="weightChart"></div>
+            <div class="chart-legend">
+              <div class="legend-left">
+                <div class="legend-item"><i style="background:#ffd8b0"></i>晨重</div>
+                <div class="legend-item"><i style="background:#f3b7a4"></i>晚重</div>
+                <div class="legend-item"><i style="background:#ffffff22"></i>目标线</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="chart-head">
+              <div>
+                <div class="section-kicker">Body Fat Trend</div>
+                <h4>体脂趋势</h4>
+              </div>
+              <div class="chart-meta" id="bodyFatTrendMeta">最近 4 周</div>
+            </div>
+            <div class="segmented" id="bodyFatRangeTabs"></div>
+            <div class="chart-shell" id="bodyFatChart"></div>
+            <div class="chart-legend">
+              <div class="legend-left">
+                <div class="legend-item"><i style="background:#9fe5d3"></i>体脂率</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <section class="route-page" id="page-history">
+    <section class="history-card glass-card">
+    <div class="history-head">
+      <div>
+        <div class="section-kicker">History Weeks</div>
+        <h4>历史周记录</h4>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="week-arrow" type="button" onclick="changeHistoryWeek(-1)">‹</button>
+        <div class="history-side" id="historyWeekLabel">第 1 周</div>
+        <button class="week-arrow" type="button" onclick="changeHistoryWeek(1)">›</button>
+      </div>
     </div>
-  </div>
+    <div class="history-body" id="historyBody"></div>
+    </section>
+  </section>
 
-  <div class="section-title">Profile Setup</div>
-  <div class="setup-bar glass-card">
-    <div><label>开始日期</label><br><input type="date" id="startDate"></div>
-    <div><label>起始体重</label><br><input type="number" class="sw" id="startWeight" step="0.1" placeholder="kg"></div>
-    <div><label>目标体重</label><br><input type="number" class="sw" id="goalWeight" step="0.1" placeholder="kg"></div>
-    <div><label>访问密码</label><br><input type="text" class="sw" id="accessPwd" placeholder="修改密码"></div>
-    <button class="btn btn-primary" onclick="saveSetup()">保存设置</button>
-    <button class="btn btn-secondary" onclick="logout()">退出</button>
-  </div>
+  <section class="route-page" id="page-settings">
+    <section class="setup-card glass-card">
+      <div class="section-kicker">Profile Setup</div>
+      <h4>基础设置</h4>
+      <div class="setup-grid">
+        <div class="field settings-mirror">
+          <label>开始日期</label>
+          <input type="date" id="startDateRouteMirror" disabled>
+        </div>
+        <div class="field settings-mirror">
+          <label>当前阶段</label>
+          <input type="text" id="phaseRouteMirror" disabled>
+        </div>
+      </div>
+      <div style="height:12px"></div>
+      <div class="setup-grid">
+        <div class="field">
+          <label>开始日期</label>
+          <input type="date" id="startDate">
+        </div>
+        <div class="field">
+          <label>目标体重</label>
+          <input type="number" id="goalWeight" step="0.1" placeholder="kg">
+        </div>
+        <div class="field">
+          <label>起始体重</label>
+          <input type="number" id="startWeight" step="0.1" placeholder="kg">
+        </div>
+        <div class="field">
+          <label>账号昵称</label>
+          <input type="text" id="displayNameSetting" placeholder="例如 小明">
+        </div>
+      </div>
+      <div class="setup-actions">
+        <button class="btn btn-primary" type="button" onclick="saveSetup()">保存设置</button>
+        <button class="btn btn-secondary" type="button" onclick="logout()">退出</button>
+      </div>
+    </section>
+  </section>
 
-  <div class="section-title">Daily Snapshot</div>
-  <div class="stats-row">
-    <div class="stat-card glass-card"><div class="label">当前体重</div><div class="value blue" id="currentWeight">— <span class="unit">kg</span></div></div>
-    <div class="stat-card glass-card"><div class="label">累计减重</div><div class="value green" id="totalLoss">— <span class="unit">kg</span></div></div>
-    <div class="stat-card glass-card"><div class="label">早晚对比</div><div class="value" id="dailyCompare">— <span class="unit">kg</span></div></div>
-    <div class="stat-card glass-card"><div class="label">最新体脂率</div><div class="value" id="bodyFatStat">— <span class="unit">%</span></div></div>
-    <div class="stat-card glass-card"><div class="label">运动天数</div><div class="value green" id="exerciseDays">0<span class="unit">天</span></div></div>
-    <div class="stat-card glass-card"><div class="label">坚持天数</div><div class="value" id="totalDays">0<span class="unit">/100</span></div></div>
-    <div class="stat-card glass-card"><div class="label">距目标</div><div class="value red" id="toGoal">— <span class="unit">kg</span></div></div>
-  </div>
+  <div class="footer-tip">数据会继续自动同步到 Supabase。现在首页只聚焦“本周 + 当天 + 趋势”，历史整表不再强行铺在前面。</div>
+</div>
 
-  <div class="section-title">Progress</div>
-  <div class="overall-progress glass-card">
-    <span class="progress-label">挑战完成进度</span>
-    <div class="progress-bar-c"><div class="progress-bar-f" id="progressBar" style="width:0%">0%</div></div>
-  </div>
-
-  <div class="section-title">Trend</div>
-  <div class="trend-card glass-card">
-    <div class="trend-head">
-      <div class="trend-title">体重趋势</div>
-      <div class="trend-meta" id="trendMeta">还没有足够的数据</div>
+<div class="date-modal" id="dateModal" onclick="closeDatePicker(event)">
+  <div class="date-panel" onclick="event.stopPropagation()">
+    <div class="date-panel-head">
+      <button class="date-icon-btn" type="button" onclick="shiftDateMonth(-1)">‹</button>
+      <div>
+        <div class="date-panel-title" id="datePickerTitle">选择日期</div>
+        <div class="date-panel-sub" id="datePickerSub">记录当天数据</div>
+      </div>
+      <button class="date-icon-btn" type="button" onclick="shiftDateMonth(1)">›</button>
     </div>
-    <div id="trendChart"></div>
-    <div class="trend-axis">
-      <span>起点</span>
-      <span>最近记录</span>
+    <div class="date-weekdays">
+      <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
     </div>
-  </div>
-
-  <div class="section-title">Check-in Board</div>
-  <div class="table-wrapper glass-card">
-    <table>
-      <thead>
-        <tr>
-          <th>天数</th><th>日期</th><th>晨重</th><th>晚重</th><th>早晚差</th><th>体脂率</th><th>较起始</th><th>较昨日</th>
-          <th>运动</th><th>类型</th><th>时长</th><th>状态</th><th>备注</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    </table>
-  </div>
-
-  <div class="footer">
-    <div class="tip">数据自动云端同步，手机和电脑都能随时继续记录。密码也可以在上方设置里直接修改。</div>
+    <div class="date-grid" id="datePickerGrid"></div>
+    <div class="date-panel-actions">
+      <button class="btn btn-secondary" type="button" onclick="closeDatePicker()">取消</button>
+      <button class="btn btn-primary" type="button" onclick="pickTodayDate()">今天</button>
+    </div>
   </div>
 </div>
 
 <script>
 const SUPABASE_URL = 'https://pslbbosqjyecaejtdwhh.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzbGJib3NxanllY2FlanRkd2hoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwNDY5NTMsImV4cCI6MjA5ODYyMjk1M30.2oFh0q9Q4_dOQAlLi6mLOwWzX0Kc0pYLpXE-wZ-MzWo';
-
 const TOTAL_DAYS = 100;
+const TOTAL_WEEKS = Math.ceil(TOTAL_DAYS / 7);
 const exerciseTypes = ['跑步', '快走', '跳绳', '骑行', '游泳', '健身操', '力量训练', '瑜伽', 'HIIT', '爬山', '球类', '其他'];
 const moods = [
-  { val: '', icon: '⚪' },
-  { val: 'great', icon: '😄' },
-  { val: 'good', icon: '🙂' },
-  { val: 'ok', icon: '😐' },
-  { val: 'tired', icon: '😮‍💨' },
-  { val: 'bad', icon: '😣' }
+  { val: '', icon: '⚪', label: '留空' },
+  { val: 'great', icon: '😄', label: '很棒' },
+  { val: 'good', icon: '🙂', label: '不错' },
+  { val: 'ok', icon: '😐', label: '一般' },
+  { val: 'tired', icon: '😮‍💨', label: '有点累' },
+  { val: 'bad', icon: '😣', label: '状态差' }
+];
+const rangeOptions = [
+  { key: 'week', label: '本周' },
+  { key: '4w', label: '4周' },
+  { key: '12w', label: '12周' },
+  { key: '100d', label: '100天' }
+];
+const phaseDefinitions = [
+  { start: 1, end: 3, title: '第 1-3 周 · 建立习惯', desc: '先把晨重、体脂率和记录动作做稳定。', tag: '当前阶段' },
+  { start: 4, end: 7, title: '第 4-7 周 · 稳定减脂', desc: '观察节奏和饮食，保持每周复盘。', tag: '下一阶段' },
+  { start: 8, end: 11, title: '第 8-11 周 · 平台调整', desc: '如果遇到平台波动，重点调整运动和作息。', tag: '后续阶段' },
+  { start: 12, end: 14, title: '第 12-14 周 · 冲刺收尾', desc: '把节奏拉稳，朝目标体重完成收尾。', tag: '最后阶段' }
 ];
 
 let supabaseClient = null;
 let data = {};
 let setup = {};
+let currentUser = null;
+let authMode = 'login';
 let isOnline = true;
+let currentWeek = 1;
+let selectedDay = 1;
+let weightRange = '4w';
+let bodyFatRange = '4w';
+let historyOpen = false;
+let historyWeek = 1;
+let currentRoute = 'today';
+let saveTimer = null;
+let touchStartX = null;
+let touchStartY = null;
+let datePickerMonth = null;
 
-function getDisplayWeight(entry) {
-  if (!entry) return null;
-  if (entry.eveningWeight) return parseFloat(entry.eveningWeight);
-  if (entry.morningWeight) return parseFloat(entry.morningWeight);
-  if (entry.weight) return parseFloat(entry.weight);
-  return null;
+function qs(id) {
+  return document.getElementById(id);
 }
 
-function getBodyFatValue(entry) {
-  if (!entry || entry.bodyFat === '' || entry.bodyFat === null || entry.bodyFat === undefined) return null;
-  const value = parseFloat(entry.bodyFat);
-  return Number.isFinite(value) ? value : null;
+function getRouteFromHash() {
+  const hash = (window.location.hash || '').replace('#', '');
+  const valid = ['today', 'week', 'trends', 'history', 'settings'];
+  return valid.includes(hash) ? hash : 'today';
 }
 
-function getMorningEveningDiff(entry) {
-  if (!entry) return null;
-  const morning = entry.morningWeight ? parseFloat(entry.morningWeight) : null;
-  const evening = entry.eveningWeight ? parseFloat(entry.eveningWeight) : null;
-  if (!Number.isFinite(morning) || !Number.isFinite(evening)) return null;
-  return evening - morning;
+function navigateTo(route) {
+  currentRoute = route;
+  if (window.location.hash !== `#${route}`) {
+    window.location.hash = route;
+  }
+  updateVisibleRoute();
+}
+
+function updateVisibleRoute() {
+  const valid = ['today', 'week', 'trends', 'history', 'settings'];
+  currentRoute = valid.includes(currentRoute) ? currentRoute : 'today';
+
+  const pages = [
+    { id: 'page-today', route: 'today' },
+    { id: 'page-week', route: 'week' },
+    { id: 'page-trends', route: 'trends' },
+    { id: 'page-history', route: 'history' },
+    { id: 'page-settings', route: 'settings' }
+  ];
+
+  pages.forEach(page => {
+    const el = qs(page.id);
+    if (!el) return;
+    el.classList.toggle('active', page.route === currentRoute);
+  });
+
+  const navLinks = qs('routeNav') ? qs('routeNav').querySelectorAll('.route-link') : [];
+  navLinks.forEach((link, index) => {
+    const route = ['today', 'week', 'trends', 'history', 'settings'][index];
+    link.classList.toggle('active', route === currentRoute);
+  });
+
+  if (currentRoute === 'history') {
+    historyWeek = currentWeek;
+    renderHistory();
+  }
 }
 
 function initSupabase() {
@@ -808,565 +2064,1248 @@ function initSupabase() {
   return true;
 }
 
-async function doLogin() {
-  const pwd = document.getElementById('loginPwd').value;
-  if (!pwd) return;
+function ensureEntry(day) {
+  if (!data[day]) data[day] = {};
+  return data[day];
+}
 
-  document.getElementById('loginError').style.display = 'none';
+function getDisplayWeight(entry) {
+  if (!entry) return null;
+  if (entry.eveningWeight !== '' && entry.eveningWeight !== undefined && entry.eveningWeight !== null) {
+    const v = parseFloat(entry.eveningWeight);
+    if (Number.isFinite(v)) return v;
+  }
+  if (entry.morningWeight !== '' && entry.morningWeight !== undefined && entry.morningWeight !== null) {
+    const v = parseFloat(entry.morningWeight);
+    if (Number.isFinite(v)) return v;
+  }
+  if (entry.weight !== '' && entry.weight !== undefined && entry.weight !== null) {
+    const v = parseFloat(entry.weight);
+    if (Number.isFinite(v)) return v;
+  }
+  return null;
+}
+
+function getMorningWeight(entry) {
+  if (!entry) return null;
+  const value = parseFloat(entry.morningWeight);
+  return Number.isFinite(value) ? value : null;
+}
+
+function getEveningWeight(entry) {
+  if (!entry) return null;
+  const value = parseFloat(entry.eveningWeight);
+  return Number.isFinite(value) ? value : null;
+}
+
+function getBodyFatValue(entry) {
+  if (!entry) return null;
+  const value = parseFloat(entry.bodyFat);
+  return Number.isFinite(value) ? value : null;
+}
+
+function getMorningEveningDiff(entry) {
+  const morning = getMorningWeight(entry);
+  const evening = getEveningWeight(entry);
+  if (!Number.isFinite(morning) || !Number.isFinite(evening)) return null;
+  return evening - morning;
+}
+
+function getDateForDay(day) {
+  if (!setup.start_date) return '';
+  const start = new Date(setup.start_date + 'T00:00:00');
+  const date = new Date(start);
+  date.setDate(start.getDate() + day - 1);
+  return date.toISOString().slice(0, 10);
+}
+
+function getDateLabel(dateStr) {
+  if (!dateStr) return '未设置';
+  const date = new Date(dateStr + 'T00:00:00');
+  const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+  return `${date.getMonth() + 1}月${date.getDate()}日 ${days[date.getDay()]}`;
+}
+
+function normalizeDateInput(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return '';
+  return date.toISOString().slice(0, 10);
+}
+
+function getMonthLabel(date) {
+  return `${date.getFullYear()}年 ${date.getMonth() + 1}月`;
+}
+
+function getShortDayLabel(day) {
+  const dateStr = getEntryDate(day);
+  if (!dateStr) return '';
+  const date = new Date(dateStr + 'T00:00:00');
+  const names = ['日', '一', '二', '三', '四', '五', '六'];
+  return names[date.getDay()];
+}
+
+function getEntryDate(day) {
+  const entry = data[day] || {};
+  return entry.date || getDateForDay(day);
+}
+
+function getWeekDays(week) {
+  const startDay = (week - 1) * 7 + 1;
+  const endDay = Math.min(TOTAL_DAYS, startDay + 6);
+  const days = [];
+  for (let day = startDay; day <= endDay; day++) days.push(day);
+  return days;
+}
+
+function getWeekRangeLabel(week) {
+  const days = getWeekDays(week);
+  const first = getEntryDate(days[0]);
+  const last = getEntryDate(days[days.length - 1]);
+  if (!first || !last) return `第 ${week} 周`;
+  const s = new Date(first + 'T00:00:00');
+  const e = new Date(last + 'T00:00:00');
+  return `${s.getMonth() + 1}月${s.getDate()}日 - ${e.getMonth() + 1}月${e.getDate()}日`;
+}
+
+function getFilledDayCount(entry) {
+  if (!entry) return 0;
+  let count = 0;
+  if (getMorningWeight(entry) !== null) count++;
+  if (getEveningWeight(entry) !== null) count++;
+  if (getBodyFatValue(entry) !== null) count++;
+  if (entry.exercise) count++;
+  if (entry.note) count++;
+  return count;
+}
+
+function isDayFilled(entry) {
+  return getDisplayWeight(entry) !== null || getBodyFatValue(entry) !== null || !!entry.exercise || !!entry.note;
+}
+
+function findLatestFilledDay() {
+  let latest = 1;
+  for (let day = 1; day <= TOTAL_DAYS; day++) {
+    if (isDayFilled(data[day] || {})) latest = day;
+  }
+  return latest;
+}
+
+function findWeekForDay(day) {
+  return Math.min(TOTAL_WEEKS, Math.max(1, Math.ceil(day / 7)));
+}
+
+function getWeekSummary(week) {
+  const days = getWeekDays(week);
+  let filled = 0;
+  let exerciseDays = 0;
+  let weights = [];
+  let bodyFats = [];
+  for (const day of days) {
+    const entry = data[day] || {};
+    if (isDayFilled(entry)) filled++;
+    if (entry.exercise) exerciseDays++;
+    const weight = getDisplayWeight(entry);
+    if (weight !== null) weights.push(weight);
+    const bodyFat = getBodyFatValue(entry);
+    if (bodyFat !== null) bodyFats.push(bodyFat);
+  }
+  return {
+    filled,
+    total: days.length,
+    exerciseDays,
+    avgWeight: weights.length ? weights.reduce((sum, v) => sum + v, 0) / weights.length : null,
+    latestWeight: weights.length ? weights[weights.length - 1] : null,
+    avgBodyFat: bodyFats.length ? bodyFats.reduce((sum, v) => sum + v, 0) / bodyFats.length : null
+  };
+}
+
+function getPreviousWeight(day) {
+  for (let d = day - 1; d >= 1; d--) {
+    const weight = getDisplayWeight(data[d] || {});
+    if (weight !== null) return weight;
+  }
+  return setup.start_weight ? parseFloat(setup.start_weight) : null;
+}
+
+function getCurrentPhase(week) {
+  return phaseDefinitions.find(phase => week >= phase.start && week <= phase.end) || phaseDefinitions[phaseDefinitions.length - 1];
+}
+
+function getMoodState(day) {
+  const entry = data[day] || {};
+  const previousWeight = getPreviousWeight(day);
+  const currentWeight = getDisplayWeight(entry);
+  const bodyFat = getBodyFatValue(entry);
+  const previousBodyFat = getPreviousBodyFat(day);
+  const diffME = getMorningEveningDiff(entry);
+  const emptyStreak = getEmptyStreak(day);
+
+  if (emptyStreak >= 2 || (!isDayFilled(entry) && day <= findLatestFilledDay() + 1)) {
+    return {
+      key: 'reset',
+      className: 'mood-reset',
+      chipClass: 'reset',
+      label: '今日状态 · 重新找回节奏',
+      title: '先别着急，重新回到节奏。',
+      copy: '这几天最重要的不是补完所有记录，而是先把今天这一张卡重新完成，重新回到连续记录的状态。',
+      hero: '这周先把记录重新接上，别急着追求完美。',
+      dot: '#e0d5f1'
+    };
+  }
+
+  if (diffME !== null && diffME > 0.8) {
+    return {
+      key: 'warning',
+      className: 'mood-warning',
+      chipClass: 'warning',
+      label: '今日状态 · 需要提醒',
+      title: '今晚波动偏高，注意收一收。',
+      copy: '这不是失败，只是提醒你晚间饮食、饮水和活动量需要稍微收回来一点。',
+      hero: '这一周重点观察晚间波动，不用被一次起伏打乱。',
+      dot: '#ffd5ae'
+    };
+  }
+
+  if (currentWeight !== null && previousWeight !== null && currentWeight <= previousWeight - 0.3 && (!entry.exercise || entry.exercise) && (previousBodyFat === null || bodyFat === null || bodyFat <= previousBodyFat + 0.1)) {
+    return {
+      key: 'bloom',
+      className: 'mood-bloom',
+      chipClass: 'bloom',
+      label: '今日状态 · 轻盈推进',
+      title: '今天状态很好，继续保持。',
+      copy: '晨重和体脂都在朝目标走，今天适合继续稳定执行，不需要大幅调整。',
+      hero: '这一周的手感很好，保持住你现在的节奏。',
+      dot: '#c7f1dc'
+    };
+  }
+
+  return {
+    key: 'steady',
+    className: 'mood-steady',
+    chipClass: 'steady',
+    label: '今日状态 · 稳定记录',
+    title: '今天很稳，继续按节奏做。',
+    copy: '数据没有明显起伏，这时候重点是持续记录，不要因为小波动打乱你的执行。',
+    hero: '这周是稳步推进的一周，不需要额外焦虑。',
+    dot: '#dde9f8'
+  };
+}
+
+function getPreviousBodyFat(day) {
+  for (let d = day - 1; d >= 1; d--) {
+    const bodyFat = getBodyFatValue(data[d] || {});
+    if (bodyFat !== null) return bodyFat;
+  }
+  return null;
+}
+
+function getEmptyStreak(day) {
+  let streak = 0;
+  for (let d = day; d >= 1; d--) {
+    if (isDayFilled(data[d] || {})) break;
+    streak++;
+  }
+  return streak;
+}
+
+function formatDiff(value, unit) {
+  if (value === null || value === undefined || !Number.isFinite(value)) return '—';
+  return `${value > 0 ? '+' : ''}${value.toFixed(1)}${unit ? ' ' + unit : ''}`;
+}
+
+function formatValue(value, unit) {
+  if (value === null || value === undefined || !Number.isFinite(value)) return '—';
+  return `${value.toFixed(1)}${unit ? ' ' + unit : ''}`;
+}
+
+async function doLogin() {
+  return handleAuthSubmit();
+}
+
+function setAuthMode(mode) {
+  authMode = mode === 'register' ? 'register' : 'login';
+  qs('loginTab').classList.toggle('active', authMode === 'login');
+  qs('registerTab').classList.toggle('active', authMode === 'register');
+  qs('registerPwd2').classList.toggle('hidden', authMode !== 'register');
+  qs('displayName').classList.toggle('hidden', authMode !== 'register');
+  qs('authSubmitBtn').textContent = authMode === 'login' ? '登录进入' : '注册并进入';
+  qs('loginError').style.display = 'none';
+}
+
+function normalizeUsername(name) {
+  return (name || '').trim().toLowerCase();
+}
+
+function getUserCacheKey(suffix) {
+  const id = currentUser?.id || currentUser?.username || 'guest';
+  return `bb_${id}_${suffix}`;
+}
+
+function uuid() {
+  if (crypto.randomUUID) return crypto.randomUUID();
+  return `u_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+}
+
+async function hashPassword(username, password) {
+  const source = `body-bloom:${normalizeUsername(username)}:${password}`;
+  const bytes = new TextEncoder().encode(source);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest)).map(byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+async function handleAuthSubmit() {
+  const username = normalizeUsername(qs('loginName').value);
+  const pwd = qs('loginPwd').value.trim();
+  if (!username || !pwd) {
+    showAuthError('请输入用户名和密码');
+    return;
+  }
+  qs('loginError').style.display = 'none';
   if (!initSupabase()) return;
 
-  try {
-    const { data: settings, error } = await supabaseClient
-      .from('user_settings').select('*').eq('id', 1).single();
-
-    if (error) {
-      if (pwd === '123456') {
-        setup = { access_password: '123456' };
-        showMainApp();
-        return;
-      }
-      document.getElementById('loginError').style.display = 'block';
-      return;
-    }
-
-    const dbPwd = settings.access_password || '123456';
-    if (pwd === dbPwd) {
-      setup = settings;
-      showMainApp();
-    } else {
-      document.getElementById('loginError').style.display = 'block';
-    }
-  } catch (e) {
-    const cached = localStorage.getItem('cached_settings');
-    if (cached) {
-      const s = JSON.parse(cached);
-      if (pwd === (s.access_password || '123456')) {
-        setup = s;
-        isOnline = false;
-        showMainApp();
-        return;
-      }
-    }
-    document.getElementById('loginError').textContent = '连接失败，请检查网络';
-    document.getElementById('loginError').style.display = 'block';
+  const btn = qs('authSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = authMode === 'login' ? '登录中...' : '注册中...';
+  if (authMode === 'register') {
+    await registerUser(username, pwd);
+  } else {
+    await loginUser(username, pwd);
+  }
+  if (!qs('loginScreen').classList.contains('hidden')) {
+    btn.disabled = false;
+    btn.textContent = authMode === 'login' ? '登录进入' : '注册并进入';
   }
 }
 
-async function showMainApp() {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('loadingScreen').style.display = 'flex';
+function showAuthError(message) {
+  qs('loginError').textContent = message;
+  qs('loginError').style.display = 'block';
+}
 
-  document.getElementById('startDate').value = setup.start_date || new Date().toISOString().slice(0, 10);
-  document.getElementById('startWeight').value = setup.start_weight || '';
-  document.getElementById('goalWeight').value = setup.goal_weight || '';
-  document.getElementById('accessPwd').value = setup.access_password || '123456';
+async function registerUser(username, password) {
+  const confirm = qs('registerPwd2').value.trim();
+  if (password.length < 6) {
+    showAuthError('密码至少 6 位');
+    return;
+  }
+  if (password !== confirm) {
+    showAuthError('两次输入的密码不一致');
+    return;
+  }
+
+  const displayName = qs('displayName').value.trim() || username;
+  const passwordHash = await hashPassword(username, password);
+  const user = { id: uuid(), username, display_name: displayName, password_hash: passwordHash };
+
+  try {
+    const { data: existing, error: findError } = await supabaseClient
+      .from('app_users')
+      .select('id')
+      .eq('username', username)
+      .maybeSingle();
+    if (findError) throw findError;
+    if (existing) {
+      showAuthError('这个用户名已经被注册');
+      return;
+    }
+
+    const { error } = await supabaseClient.from('app_users').insert(user);
+    if (error) throw error;
+    currentUser = { id: user.id, username, display_name: displayName };
+    setup = makeDefaultSetup();
+    await saveInitialUserSetup();
+    await showMainApp();
+  } catch (error) {
+    console.warn('register fallback to local cache', error);
+    const users = JSON.parse(localStorage.getItem('bb_local_users') || '{}');
+    if (users[username]) {
+      showAuthError('这个用户名已经被注册');
+      return;
+    }
+    users[username] = user;
+    localStorage.setItem('bb_local_users', JSON.stringify(users));
+    currentUser = { id: user.id, username, display_name: displayName, localOnly: true };
+    setup = makeDefaultSetup();
+    isOnline = false;
+    await showMainApp();
+  }
+}
+
+async function loginUser(username, password) {
+  const passwordHash = await hashPassword(username, password);
+  try {
+    const { data: user, error } = await supabaseClient
+      .from('app_users')
+      .select('*')
+      .eq('username', username)
+      .maybeSingle();
+    if (error) throw error;
+    if (user && user.password_hash === passwordHash) {
+      currentUser = { id: user.id, username: user.username, display_name: user.display_name || user.username };
+      await loadUserSetup();
+      await showMainApp();
+      return;
+    }
+    await tryLegacyLogin(username, password);
+  } catch (error) {
+    console.warn('login fallback to local cache', error);
+    const users = JSON.parse(localStorage.getItem('bb_local_users') || '{}');
+    const localUser = users[username];
+    if (localUser && localUser.password_hash === passwordHash) {
+      currentUser = { id: localUser.id, username, display_name: localUser.display_name || username, localOnly: true };
+      setup = JSON.parse(localStorage.getItem(getUserCacheKey('settings')) || 'null') || makeDefaultSetup();
+      isOnline = false;
+      await showMainApp();
+      return;
+    }
+    await tryLegacyLogin(username, password);
+  }
+}
+
+async function tryLegacyLogin(username, password) {
+  if ((username !== 'legacy' && username !== 'admin') || password !== '123456') {
+    showAuthError('账号或密码错误');
+    return;
+  }
+  currentUser = { id: 'legacy', username: 'legacy', display_name: '旧数据账号', legacy: true };
+  try {
+    const { data: settings, error } = await supabaseClient.from('user_settings').select('*').eq('id', 1).single();
+    if (error) throw error;
+    setup = settings || makeDefaultSetup();
+  } catch (error) {
+    setup = JSON.parse(localStorage.getItem('cached_settings') || 'null') || makeDefaultSetup();
+    isOnline = false;
+  }
+  await showMainApp();
+}
+
+function makeDefaultSetup() {
+  return {
+    start_date: new Date().toISOString().slice(0, 10),
+    start_weight: null,
+    goal_weight: null,
+    display_name: currentUser?.display_name || ''
+  };
+}
+
+async function loadUserSetup() {
+  try {
+    const { data: settings, error } = await supabaseClient
+      .from('app_user_settings')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .maybeSingle();
+    if (error) throw error;
+    setup = settings || makeDefaultSetup();
+  } catch (error) {
+    console.warn('loadUserSetup fallback to local cache', error);
+    setup = JSON.parse(localStorage.getItem(getUserCacheKey('settings')) || 'null') || makeDefaultSetup();
+    isOnline = false;
+  }
+}
+
+async function saveInitialUserSetup() {
+  localStorage.setItem(getUserCacheKey('settings'), JSON.stringify(setup));
+  if (!(supabaseClient && isOnline && currentUser && !currentUser.localOnly)) return;
+  await supabaseClient.from('app_user_settings').upsert({
+    user_id: currentUser.id,
+    start_date: setup.start_date || null,
+    start_weight: setup.start_weight || null,
+    goal_weight: setup.goal_weight || null,
+    display_name: setup.display_name || currentUser.display_name || null
+  });
+}
+
+async function showMainApp() {
+  qs('loginScreen').classList.add('hidden');
+  qs('loadingScreen').classList.remove('hidden');
+
+  qs('startDate').value = setup.start_date || new Date().toISOString().slice(0, 10);
+  qs('startWeight').value = setup.start_weight || '';
+  qs('goalWeight').value = setup.goal_weight || '';
+  qs('displayNameSetting').value = setup.display_name || currentUser?.display_name || '';
 
   if (isOnline) {
     await loadAllData();
-    localStorage.setItem('cached_data', JSON.stringify(data));
-    localStorage.setItem('cached_settings', JSON.stringify(setup));
+    localStorage.setItem(getUserCacheKey('data'), JSON.stringify(data));
+    localStorage.setItem(getUserCacheKey('settings'), JSON.stringify(setup));
   } else {
-    const cached = localStorage.getItem('cached_data');
+    const cached = localStorage.getItem(getUserCacheKey('data')) || localStorage.getItem('cached_data');
     if (cached) data = JSON.parse(cached);
   }
 
-  document.getElementById('loadingScreen').style.display = 'none';
-  document.getElementById('mainApp').style.display = 'block';
-  renderTable();
-  updateStats();
+  seedMissingDates();
+  hydrateStaticChoices();
+  selectedDay = findLatestFilledDay();
+  currentWeek = findWeekForDay(selectedDay);
+  currentRoute = getRouteFromHash();
+  qs('loadingScreen').classList.add('hidden');
+  qs('mainApp').classList.remove('hidden');
+  bindSwipe();
+  renderApp();
+}
+
+function seedMissingDates() {
+  for (let day = 1; day <= TOTAL_DAYS; day++) {
+    const entry = ensureEntry(day);
+    if (!entry.date) entry.date = getDateForDay(day);
+  }
 }
 
 async function loadAllData() {
   try {
-    const { data: records, error } = await supabaseClient.from('checkin_records').select('*');
+    const table = currentUser?.legacy ? 'checkin_records' : 'app_checkin_records';
+    let query = supabaseClient.from(table).select('*');
+    if (!currentUser?.legacy) query = query.eq('user_id', currentUser.id);
+    const { data: records, error } = await query;
     if (error) throw error;
-
     data = {};
     if (records) {
-      for (const r of records) {
-        data[r.day] = {
-          date: r.record_date || '',
-          morningWeight: r.morning_weight || '',
-          eveningWeight: r.evening_weight || '',
-          bodyFat: r.body_fat || '',
-          weight: r.weight || '',
-          exercise: r.exercise || false,
-          exType: r.exercise_type || '',
-          duration: r.duration || '',
-          mood: r.mood || '',
-          note: r.note || ''
+      for (const row of records) {
+        data[row.day] = {
+          date: row.record_date || '',
+          morningWeight: row.morning_weight ?? '',
+          eveningWeight: row.evening_weight ?? '',
+          bodyFat: row.body_fat ?? '',
+          weight: row.weight ?? '',
+          exercise: !!row.exercise,
+          exType: row.exercise_type || '',
+          duration: row.duration ?? '',
+          mood: row.mood || '',
+          note: row.note || ''
         };
       }
     }
-  } catch (e) {
-    console.error('Load error:', e);
+  } catch (error) {
+    console.warn('loadAllData fallback to local cache', error);
     showToast('加载数据失败，已切换到本地缓存');
     isOnline = false;
     updateSyncStatus();
-    const cached = localStorage.getItem('cached_data');
+    const cached = localStorage.getItem(getUserCacheKey('data')) || localStorage.getItem('cached_data');
     if (cached) data = JSON.parse(cached);
   }
 }
 
-async function saveSetup() {
-  const newSetup = {
-    id: 1,
-    start_date: document.getElementById('startDate').value || null,
-    start_weight: parseFloat(document.getElementById('startWeight').value) || null,
-    goal_weight: parseFloat(document.getElementById('goalWeight').value) || null,
-    access_password: document.getElementById('accessPwd').value || '123456'
+function hydrateStaticChoices() {
+  const exTypeEl = qs('fieldExerciseType');
+  if (!exTypeEl.dataset.ready) {
+    exTypeEl.innerHTML = `<option value="">未选择</option>${exerciseTypes.map(type => `<option value="${type}">${type}</option>`).join('')}`;
+    exTypeEl.dataset.ready = '1';
+  }
+
+  const moodChoicesEl = qs('moodChoices');
+  if (!moodChoicesEl.dataset.ready) {
+    moodChoicesEl.innerHTML = moods.map(mood => `
+      <div class="choice" data-value="${mood.val}" onclick="setCurrentMood('${mood.val.replace(/'/g, "\\'")}')">
+        <div>${mood.icon}</div>
+        <div style="margin-top:4px;font-size:0.72rem">${mood.label}</div>
+      </div>
+    `).join('');
+    moodChoicesEl.dataset.ready = '1';
+  }
+
+  buildRangeTabs('weightRangeTabs', weightRange, setWeightRange);
+  buildRangeTabs('bodyFatRangeTabs', bodyFatRange, setBodyFatRange);
+}
+
+function buildRangeTabs(targetId, activeKey, callback) {
+  const container = qs(targetId);
+  container.innerHTML = rangeOptions.map(option => `
+    <button type="button" class="${option.key === activeKey ? 'active' : ''}" onclick="${callback.name}('${option.key}')">${option.label}</button>
+  `).join('');
+}
+
+function getMoodVisual(key) {
+  const visuals = {
+    bloom: {
+      accent: '#9fe8c8',
+      soft: 'rgba(112, 220, 158, 0.28)',
+      bgA: 'rgba(255, 220, 158, 0.34)',
+      bgB: 'rgba(112, 220, 158, 0.36)',
+      bgC: 'rgba(72, 168, 144, 0.34)',
+      pageB: '#214b45',
+      pageC: '#d9a36d',
+      meter: '86%',
+      dayBg: 'linear-gradient(180deg, rgba(199,241,220,0.30), rgba(255,228,201,0.18))',
+      dayBorder: 'rgba(199,241,220,0.34)'
+    },
+    steady: {
+      accent: '#bdd8f4',
+      soft: 'rgba(144, 181, 219, 0.24)',
+      bgA: 'rgba(189, 216, 244, 0.34)',
+      bgB: 'rgba(107, 157, 197, 0.32)',
+      bgC: 'rgba(255, 180, 132, 0.24)',
+      pageB: '#263f52',
+      pageC: '#c8957c',
+      meter: '62%',
+      dayBg: 'linear-gradient(180deg, rgba(220,232,246,0.24), rgba(189,209,232,0.16))',
+      dayBorder: 'rgba(220,232,246,0.26)'
+    },
+    warning: {
+      accent: '#ffc18f',
+      soft: 'rgba(255, 172, 112, 0.28)',
+      bgA: 'rgba(255, 193, 143, 0.42)',
+      bgB: 'rgba(255, 133, 116, 0.28)',
+      bgC: 'rgba(130, 82, 88, 0.36)',
+      pageB: '#5a3740',
+      pageC: '#f0a066',
+      meter: '42%',
+      dayBg: 'linear-gradient(180deg, rgba(255,216,188,0.30), rgba(243,191,175,0.18))',
+      dayBorder: 'rgba(255,216,188,0.34)'
+    },
+    reset: {
+      accent: '#d8c8f1',
+      soft: 'rgba(179, 150, 220, 0.25)',
+      bgA: 'rgba(216, 200, 241, 0.36)',
+      bgB: 'rgba(126, 116, 171, 0.32)',
+      bgC: 'rgba(97, 132, 168, 0.26)',
+      pageB: '#363b5b',
+      pageC: '#8b78aa',
+      meter: '30%',
+      dayBg: 'linear-gradient(180deg, rgba(224,213,241,0.28), rgba(187,176,207,0.16))',
+      dayBorder: 'rgba(224,213,241,0.30)'
+    }
   };
-
-  Object.assign(setup, newSetup);
-  localStorage.setItem('cached_settings', JSON.stringify(setup));
-
-  if (supabaseClient && isOnline) {
-    setSync('saving');
-    try {
-      const { error } = await supabaseClient.from('user_settings').upsert(newSetup);
-      if (error) throw error;
-      setSync('online');
-      showToast('设置已保存');
-    } catch (e) {
-      setSync('offline');
-      showToast('保存失败，已缓存到本地');
-    }
-  } else {
-    showToast('离线模式，已缓存到本地');
-  }
-
-  renderTable();
-  updateStats();
+  return visuals[key] || visuals.steady;
 }
 
-async function updateField(day, field, value) {
-  if (!data[day]) data[day] = {};
-  data[day][field] = value;
-
-  if (field === 'date') {
-    data[day].date = value;
-  }
-
-  localStorage.setItem('cached_data', JSON.stringify(data));
-
-  if (supabaseClient && isOnline) {
-    setSync('saving');
-    try {
-      const row = buildRow(day);
-      const { error } = await supabaseClient.from('checkin_records').upsert(row);
-      if (error) throw error;
-      setSync('online');
-    } catch (e) {
-      setSync('offline');
-      isOnline = false;
-    }
-  }
-
-  calculateChanges();
-  updateStats();
+function applyMoodTheme(mood) {
+  const visual = getMoodVisual(mood.key);
+  document.documentElement.style.setProperty('--mood-accent', visual.accent);
+  document.documentElement.style.setProperty('--mood-accent-soft', visual.soft);
+  document.documentElement.style.setProperty('--mood-bg-a', visual.bgA);
+  document.documentElement.style.setProperty('--mood-bg-b', visual.bgB);
+  document.documentElement.style.setProperty('--mood-bg-c', visual.bgC);
+  document.documentElement.style.setProperty('--mood-page-b', visual.pageB);
+  document.documentElement.style.setProperty('--mood-page-c', visual.pageC);
 }
 
-async function toggleExercise(day) {
-  if (!data[day]) data[day] = {};
-  data[day].exercise = !data[day].exercise;
+function renderApp() {
+  const mood = getMoodState(selectedDay);
+  const phase = getCurrentPhase(currentWeek);
+  applyMoodTheme(mood);
+  if (qs('heroMetaCopy')) qs('heroMetaCopy').textContent = mood.hero;
+  qs('weekRange').textContent = getWeekRangeLabel(currentWeek);
+  qs('weekLabel').textContent = phase.title;
+  if (qs('startDateRouteMirror')) qs('startDateRouteMirror').value = setup.start_date || '';
+  if (qs('phaseRouteMirror')) qs('phaseRouteMirror').value = phase.title;
 
-  localStorage.setItem('cached_data', JSON.stringify(data));
+  renderWeekStrip();
+  renderSelectedDayCard(mood);
+  renderStats();
+  renderPhaseTrack();
+  renderHistory();
+  renderWeightChart();
+  renderBodyFatChart();
+  updateVisibleRoute();
+}
 
-  const el = document.getElementById('ex-check-' + day);
-  if (data[day].exercise) {
-    el.classList.add('checked');
-    el.textContent = '✓';
+function renderWeekStrip() {
+  const weekDays = getWeekDays(currentWeek);
+  const html = weekDays.map(day => {
+    const entry = data[day] || {};
+    const dateStr = getEntryDate(day);
+    const date = dateStr ? new Date(dateStr + 'T00:00:00') : null;
+    const state = getMoodState(day);
+    const diffText = getDisplayWeight(entry) !== null ? formatValue(getDisplayWeight(entry), 'kg') : '待记录';
+    return `
+      <div class="day-card ${day === selectedDay ? 'active' : ''}" style="${getDayCardStyle(state, day)}" onclick="selectDay(${day})">
+        <div class="day-top">周${getShortDayLabel(day)}</div>
+        <div class="day-date">${date ? date.getDate() : day}</div>
+        <div class="day-state">${diffText}</div>
+        <div class="day-dot" style="background:${state.dot}"></div>
+      </div>
+    `;
+  }).join('');
+  qs('daysStrip').innerHTML = html;
+  qs('weekCompletion').textContent = `${getWeekSummary(currentWeek).filled} / ${getWeekSummary(currentWeek).total}`;
+}
+
+function getDayCardStyle(state, day) {
+  const visual = getMoodVisual(state.key);
+  const activeRing = day === selectedDay
+    ? `0 0 0 1px ${visual.dayBorder} inset, 0 12px 24px ${visual.soft}`
+    : '0 8px 18px rgba(0,0,0,0.10)';
+  return `background:${visual.dayBg}; border-color:${visual.dayBorder}; box-shadow:${activeRing};`;
+}
+
+function openDatePicker() {
+  const currentValue = qs('fieldDate').value || getDateForDay(selectedDay) || new Date().toISOString().slice(0, 10);
+  const current = new Date(currentValue + 'T00:00:00');
+  datePickerMonth = new Date(current.getFullYear(), current.getMonth(), 1);
+  renderDatePicker();
+  qs('dateModal').classList.add('show');
+}
+
+function closeDatePicker(event) {
+  if (event && event.target !== qs('dateModal')) return;
+  qs('dateModal').classList.remove('show');
+}
+
+function shiftDateMonth(delta) {
+  if (!datePickerMonth) datePickerMonth = new Date();
+  datePickerMonth = new Date(datePickerMonth.getFullYear(), datePickerMonth.getMonth() + delta, 1);
+  renderDatePicker();
+}
+
+function renderDatePicker() {
+  const month = datePickerMonth || new Date();
+  const selected = qs('fieldDate').value;
+  const today = new Date();
+  qs('datePickerTitle').textContent = getMonthLabel(month);
+  qs('datePickerSub').textContent = selected ? getDateLabel(selected) : '选择记录日期';
+
+  const first = new Date(month.getFullYear(), month.getMonth(), 1);
+  const start = new Date(first);
+  start.setDate(first.getDate() - first.getDay());
+  const cells = [];
+  for (let i = 0; i < 42; i++) {
+    const date = new Date(start);
+    date.setDate(start.getDate() + i);
+    const value = normalizeDateInput(date);
+    const muted = date.getMonth() !== month.getMonth();
+    const active = value === selected;
+    const isToday = value === normalizeDateInput(today);
+    cells.push(`
+      <button class="date-day ${muted ? 'muted' : ''} ${active ? 'active' : ''}" type="button" onclick="selectDateValue('${value}')">
+        ${date.getDate()}${isToday && !active ? '<small style="display:block;font-size:0.52rem;opacity:.72">今</small>' : ''}
+      </button>
+    `);
+  }
+  qs('datePickerGrid').innerHTML = cells.join('');
+}
+
+function selectDateValue(value) {
+  qs('fieldDate').value = value;
+  qs('fieldDayText').value = `第 ${selectedDay} 天 · ${getDateLabel(value)}`;
+  closeDatePicker();
+}
+
+function pickTodayDate() {
+  selectDateValue(new Date().toISOString().slice(0, 10));
+}
+
+function renderSelectedDayCard(mood) {
+  const entry = ensureEntry(selectedDay);
+  const visual = getMoodVisual(mood.key);
+  const card = qs('todayCard');
+  card.className = `edit-card ${mood.className}`;
+  qs('moodChip').className = `mood-chip ${mood.chipClass}`;
+  qs('moodChip').innerHTML = `<i></i><span>${mood.label}</span>`;
+  qs('moodMeter').querySelector('i').style.width = visual.meter;
+  qs('todayHeadline').textContent = mood.title;
+  qs('todayCopy').textContent = mood.copy;
+
+  qs('fieldDate').value = entry.date || getDateForDay(selectedDay);
+  qs('fieldDayText').value = `第 ${selectedDay} 天 · ${getDateLabel(qs('fieldDate').value)}`;
+  qs('fieldMorningWeight').value = entry.morningWeight ?? '';
+  qs('fieldEveningWeight').value = entry.eveningWeight ?? '';
+  qs('fieldBodyFat').value = entry.bodyFat ?? '';
+  qs('fieldDuration').value = entry.duration ?? '';
+  qs('fieldExerciseType').value = entry.exType || '';
+  qs('fieldNote').value = entry.note || '';
+  updateExerciseToggle(entry.exercise);
+  updateMoodChoices(entry.mood || '');
+  qs('todayNote').textContent = isDayFilled(entry) ? '保存后会同步更新这一天、本周完成率和趋势图。' : '今天还没开始记录，先填最重要的晨重和体脂率也可以。';
+}
+
+function updateExerciseToggle(active) {
+  const el = qs('exerciseToggle');
+  const tick = qs('exerciseTick');
+  const text = qs('exerciseText');
+  if (active) {
+    el.classList.add('active');
+    tick.textContent = '✓';
+    text.textContent = '今天已经完成运动';
   } else {
-    el.classList.remove('checked');
-    el.textContent = '';
+    el.classList.remove('active');
+    tick.textContent = '';
+    text.textContent = '今天还没完成运动';
+  }
+}
+
+function updateMoodChoices(activeValue) {
+  const nodes = qs('moodChoices').querySelectorAll('.choice');
+  nodes.forEach(node => {
+    node.classList.toggle('active', node.dataset.value === activeValue);
+  });
+}
+
+function renderStats() {
+  let latestWeight = null;
+  let latestBodyFat = null;
+  let latestCompare = null;
+  let exerciseDays = 0;
+  let filledDays = 0;
+
+  for (let day = 1; day <= TOTAL_DAYS; day++) {
+    const entry = data[day] || {};
+    const displayWeight = getDisplayWeight(entry);
+    const bodyFat = getBodyFatValue(entry);
+    const compare = getMorningEveningDiff(entry);
+    if (displayWeight !== null) latestWeight = displayWeight;
+    if (bodyFat !== null) latestBodyFat = bodyFat;
+    if (compare !== null) latestCompare = compare;
+    if (entry.exercise) exerciseDays++;
+    if (isDayFilled(entry)) filledDays = Math.max(filledDays, day);
   }
 
-  if (supabaseClient && isOnline) {
-    setSync('saving');
-    try {
-      const row = buildRow(day);
-      const { error } = await supabaseClient.from('checkin_records').upsert(row);
-      if (error) throw error;
-      setSync('online');
-    } catch (e) {
-      setSync('offline');
-      isOnline = false;
-    }
+  const startWeight = setup.start_weight ? parseFloat(setup.start_weight) : null;
+  const goalWeight = setup.goal_weight ? parseFloat(setup.goal_weight) : null;
+  const weekSummary = getWeekSummary(currentWeek);
+
+  qs('currentWeight').textContent = formatValue(latestWeight, 'kg');
+  qs('bodyFatStat').textContent = formatValue(latestBodyFat, '%');
+  qs('dailyCompare').textContent = latestCompare !== null ? formatDiff(latestCompare, 'kg') : '—';
+  qs('exerciseDays').textContent = `${exerciseDays} 天`;
+  qs('totalDays').textContent = `${filledDays} / 100`;
+  qs('weekCompletion').textContent = `${weekSummary.filled} / ${weekSummary.total}`;
+  qs('startWeightLabel').textContent = formatValue(startWeight, 'kg');
+  qs('goalWeightLabel').textContent = formatValue(goalWeight, 'kg');
+
+  if (startWeight !== null && latestWeight !== null) {
+    const loss = startWeight - latestWeight;
+    qs('totalLoss').textContent = `${loss >= 0 ? '-' : '+'}${Math.abs(loss).toFixed(1)} kg`;
+  } else {
+    qs('totalLoss').textContent = '—';
   }
 
-  calculateChanges();
-  updateStats();
+  if (goalWeight !== null && latestWeight !== null) {
+    const diff = latestWeight - goalWeight;
+    qs('toGoal').textContent = diff <= 0 ? '已达标' : `${diff.toFixed(1)} kg`;
+  } else {
+    qs('toGoal').textContent = '—';
+  }
+
+  const pct = Math.round((filledDays / TOTAL_DAYS) * 100);
+  qs('progressLabel').textContent = `${pct}%`;
+  qs('progressFill').style.width = `${pct}%`;
+}
+
+function renderPhaseTrack() {
+  const html = phaseDefinitions.map(phase => {
+    const active = currentWeek >= phase.start && currentWeek <= phase.end;
+    return `
+      <div class="phase-pill ${active ? 'active' : ''}">
+        <strong>${phase.title}</strong>
+        <span>${phase.desc}</span>
+        <em>${active ? '进行中' : phase.tag}</em>
+      </div>
+    `;
+  }).join('');
+  qs('phaseTrack').innerHTML = html;
+}
+
+function renderHistory() {
+  const body = qs('historyBody');
+  historyWeek = Math.max(1, Math.min(TOTAL_WEEKS, historyWeek || currentWeek || 1));
+  qs('historyWeekLabel').textContent = `第 ${historyWeek} 周`;
+  const days = getWeekDays(historyWeek);
+  const summary = getWeekSummary(historyWeek);
+  const items = days.map(day => {
+    const entry = data[day] || {};
+    const state = getMoodState(day);
+    const dateText = getDateLabel(getEntryDate(day));
+    const bodyFat = getBodyFatValue(entry);
+    const weight = getDisplayWeight(entry);
+    return `
+      <div class="history-row" onclick="jumpToDay(${day})" style="cursor:pointer">
+        <div class="history-day">${day}</div>
+        <div class="history-main">
+          <strong>${dateText}</strong>
+          <span>${weight !== null ? `${weight.toFixed(1)} kg` : '待记录'} · ${bodyFat !== null ? `${bodyFat.toFixed(1)}% 体脂` : '未填体脂'} · ${state.label.replace('今日状态 · ', '')}</span>
+        </div>
+        <div class="history-side">${entry.exercise ? '已运动' : '未运动'}</div>
+      </div>
+    `;
+  }).join('');
+
+  body.innerHTML = `
+    <div class="history-head" style="margin-bottom:8px">
+      <div>
+        <strong>${getWeekRangeLabel(historyWeek)}</strong>
+        <div style="color:var(--soft);font-size:0.78rem">本周已记录 ${summary.filled}/${summary.total} 天</div>
+      </div>
+      <div class="history-side">${summary.avgWeight !== null ? `均重 ${summary.avgWeight.toFixed(1)} kg` : '等待更多记录'}</div>
+    </div>
+    <div class="history-list">${items}</div>
+  `;
+}
+
+function getFilteredDays(rangeKey) {
+  if (rangeKey === 'week') return getWeekDays(currentWeek);
+  if (rangeKey === '4w') {
+    const startWeek = Math.max(1, currentWeek - 3);
+    let days = [];
+    for (let week = startWeek; week <= currentWeek; week++) days = days.concat(getWeekDays(week));
+    return days;
+  }
+  if (rangeKey === '12w') {
+    const startWeek = Math.max(1, currentWeek - 11);
+    let days = [];
+    for (let week = startWeek; week <= currentWeek; week++) days = days.concat(getWeekDays(week));
+    return days;
+  }
+  return Array.from({ length: TOTAL_DAYS }, (_, i) => i + 1);
+}
+
+function renderWeightChart() {
+  buildRangeTabs('weightRangeTabs', weightRange, setWeightRange);
+  const days = getFilteredDays(weightRange);
+  const morningSeries = [];
+  const eveningSeries = [];
+  for (const day of days) {
+    const entry = data[day] || {};
+    const morning = getMorningWeight(entry);
+    const evening = getEveningWeight(entry);
+    if (morning !== null) morningSeries.push({ day, value: morning, label: getDateLabel(getEntryDate(day)) });
+    if (evening !== null) eveningSeries.push({ day, value: evening, label: getDateLabel(getEntryDate(day)) });
+  }
+
+  qs('weightTrendMeta').textContent = getRangeTitle(weightRange);
+  if (morningSeries.length + eveningSeries.length < 2) {
+    qs('weightChart').innerHTML = `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:var(--soft);font-size:0.86rem">先录入至少 2 次晨重或晚重，这里会自动生成体重趋势。</div>`;
+    return;
+  }
+
+  const all = morningSeries.concat(eveningSeries);
+  const values = all.map(item => item.value);
+  const minValue = Math.min(...values);
+  const maxValue = Math.max(...values);
+  const range = Math.max(maxValue - minValue, 0.8);
+  const width = 720;
+  const height = 220;
+  const pad = 18;
+  const goalWeight = setup.goal_weight ? parseFloat(setup.goal_weight) : null;
+
+  const morningPoints = pointsForSeries(morningSeries, days, minValue, range, width, height, pad);
+  const eveningPoints = pointsForSeries(eveningSeries, days, minValue, range, width, height, pad);
+  const bubbleText = all[all.length - 1] ? `最新 ${all[all.length - 1].value.toFixed(1)} kg` : '';
+  const goalY = goalWeight !== null ? pointY(goalWeight, minValue, range, height, pad) : null;
+
+  qs('weightChart').innerHTML = `
+    <div class="chart-bubble">${bubbleText}</div>
+    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="体重趋势图">
+      ${goalY !== null ? `<line x1="${pad}" y1="${goalY}" x2="${width - pad}" y2="${goalY}" stroke="rgba(255,255,255,0.22)" stroke-dasharray="6 6"></line>` : ''}
+      ${morningPoints.length ? `<path d="${buildLinePath(morningPoints)}" fill="none" stroke="#ffd8b0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>` : ''}
+      ${eveningPoints.length ? `<path d="${buildLinePath(eveningPoints)}" fill="none" stroke="#f3b7a4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 6"></path>` : ''}
+      ${morningPoints.map((point, index) => `<circle cx="${point.x}" cy="${point.y}" r="${index === morningPoints.length - 1 ? 5 : 3.2}" fill="#ffd8b0"></circle>`).join('')}
+      ${eveningPoints.map((point, index) => `<circle cx="${point.x}" cy="${point.y}" r="${index === eveningPoints.length - 1 ? 4.5 : 3}" fill="#f3b7a4"></circle>`).join('')}
+    </svg>
+  `;
+}
+
+function renderBodyFatChart() {
+  buildRangeTabs('bodyFatRangeTabs', bodyFatRange, setBodyFatRange);
+  const days = getFilteredDays(bodyFatRange);
+  const series = [];
+  for (const day of days) {
+    const bodyFat = getBodyFatValue(data[day] || {});
+    if (bodyFat !== null) series.push({ day, value: bodyFat, label: getDateLabel(getEntryDate(day)) });
+  }
+
+  qs('bodyFatTrendMeta').textContent = getRangeTitle(bodyFatRange);
+  if (series.length < 2) {
+    qs('bodyFatChart').innerHTML = `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:var(--soft);font-size:0.86rem">先录入至少 2 次体脂率，这里会自动生成体脂趋势。</div>`;
+    return;
+  }
+
+  const values = series.map(item => item.value);
+  const minValue = Math.min(...values);
+  const maxValue = Math.max(...values);
+  const range = Math.max(maxValue - minValue, 0.6);
+  const width = 720;
+  const height = 220;
+  const pad = 18;
+  const points = pointsForSeries(series, days, minValue, range, width, height, pad);
+  qs('bodyFatChart').innerHTML = `
+    <div class="chart-bubble">最新 ${series[series.length - 1].value.toFixed(1)} %</div>
+    <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="体脂趋势图">
+      <path d="${buildLinePath(points)}" fill="none" stroke="#9fe5d3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+      ${points.map((point, index) => `<circle cx="${point.x}" cy="${point.y}" r="${index === points.length - 1 ? 5 : 3.4}" fill="#9fe5d3"></circle>`).join('')}
+    </svg>
+  `;
+}
+
+function pointsForSeries(series, days, minValue, range, width, height, pad) {
+  const dayToIndex = new Map(days.map((day, index) => [day, index]));
+  const innerWidth = width - pad * 2;
+  const innerHeight = height - pad * 2;
+  const denom = Math.max(days.length - 1, 1);
+  return series.map(item => {
+    const index = dayToIndex.get(item.day) || 0;
+    const x = pad + (index / denom) * innerWidth;
+    const y = pointY(item.value, minValue, range, height, pad, innerHeight);
+    return { x, y, ...item };
+  });
+}
+
+function pointY(value, minValue, range, height, pad, innerHeight) {
+  const realInnerHeight = innerHeight || height - pad * 2;
+  const maxValue = minValue + range;
+  return pad + ((maxValue - value) / range) * realInnerHeight;
+}
+
+function buildLinePath(points) {
+  return points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(' ');
+}
+
+function getRangeTitle(rangeKey) {
+  if (rangeKey === 'week') return '当前周';
+  if (rangeKey === '4w') return '最近 4 周';
+  if (rangeKey === '12w') return '最近 12 周';
+  return '完整 100 天';
+}
+
+function selectDay(day) {
+  selectedDay = day;
+  currentWeek = findWeekForDay(day);
+  renderApp();
+}
+
+function jumpToDay(day) {
+  selectedDay = day;
+  currentWeek = findWeekForDay(day);
+  historyWeek = currentWeek;
+  renderApp();
+  navigateTo('today');
+}
+
+function changeWeek(delta) {
+  currentWeek = Math.max(1, Math.min(TOTAL_WEEKS, currentWeek + delta));
+  const weekDays = getWeekDays(currentWeek);
+  if (!weekDays.includes(selectedDay)) {
+    const target = weekDays.find(day => !isDayFilled(data[day] || {})) || weekDays[0];
+    selectedDay = target;
+  }
+  renderApp();
+}
+
+function bindSwipe() {
+  const strip = qs('daysStrip');
+  if (strip.dataset.bound) return;
+  strip.dataset.bound = '1';
+
+  strip.addEventListener('touchstart', event => {
+    const touch = event.changedTouches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+  }, { passive: true });
+
+  strip.addEventListener('touchend', event => {
+    if (touchStartX === null || touchStartY === null) return;
+    const touch = event.changedTouches[0];
+    const dx = touch.clientX - touchStartX;
+    const dy = touch.clientY - touchStartY;
+    touchStartX = null;
+    touchStartY = null;
+    if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy)) return;
+    if (dx < 0) changeWeek(1);
+    else changeWeek(-1);
+  }, { passive: true });
+}
+
+function toggleHistory() {
+  historyWeek = currentWeek;
+  renderHistory();
+  navigateTo('history');
+}
+
+function changeHistoryWeek(delta) {
+  historyWeek = Math.max(1, Math.min(TOTAL_WEEKS, historyWeek + delta));
+  renderHistory();
+}
+
+function scrollToTodayCard() {
+  if (currentRoute !== 'today') navigateTo('today');
+  qs('todayCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleCurrentExercise() {
+  const entry = ensureEntry(selectedDay);
+  entry.exercise = !entry.exercise;
+  updateExerciseToggle(entry.exercise);
+}
+
+function setCurrentMood(value) {
+  ensureEntry(selectedDay).mood = value;
+  updateMoodChoices(value);
+}
+
+async function saveCurrentDay() {
+  const entry = ensureEntry(selectedDay);
+  entry.date = qs('fieldDate').value || getDateForDay(selectedDay);
+  entry.morningWeight = qs('fieldMorningWeight').value;
+  entry.eveningWeight = qs('fieldEveningWeight').value;
+  entry.bodyFat = qs('fieldBodyFat').value;
+  entry.duration = qs('fieldDuration').value;
+  entry.exType = qs('fieldExerciseType').value;
+  entry.note = qs('fieldNote').value.trim();
+  entry.weight = getDisplayWeight(entry);
+
+  localStorage.setItem(getUserCacheKey('data'), JSON.stringify(data));
+  renderApp();
+  await persistDay(selectedDay);
+  showToast('今天这张卡已保存');
+}
+
+async function persistDay(day) {
+  if (!(supabaseClient && isOnline)) return;
+  setSync('saving');
+  try {
+    const row = buildRow(day);
+    const table = currentUser?.legacy ? 'checkin_records' : 'app_checkin_records';
+    const { error } = await supabaseClient.from(table).upsert(row);
+    if (error) throw error;
+    setSync('online');
+  } catch (error) {
+    console.error('persistDay failed', error);
+    setSync('offline');
+    isOnline = false;
+  }
 }
 
 function buildRow(day) {
   const entry = data[day] || {};
   let dateStr = entry.date || getDateForDay(day);
   if (dateStr && dateStr.length >= 10) dateStr = dateStr.slice(0, 10);
-
-  return {
+  const row = {
     day,
     record_date: dateStr || null,
     morning_weight: entry.morningWeight ? parseFloat(entry.morningWeight) : null,
     evening_weight: entry.eveningWeight ? parseFloat(entry.eveningWeight) : null,
     body_fat: entry.bodyFat ? parseFloat(entry.bodyFat) : null,
     weight: getDisplayWeight(entry),
-    exercise: entry.exercise || false,
+    exercise: !!entry.exercise,
     exercise_type: entry.exType || null,
     duration: entry.duration ? parseInt(entry.duration, 10) : null,
     mood: entry.mood || null,
     note: entry.note || null
   };
+  if (!currentUser?.legacy) row.user_id = currentUser.id;
+  return row;
 }
 
-function getDateForDay(day) {
-  if (!setup.start_date) return '';
-  const start = new Date(setup.start_date);
-  const d = new Date(start);
-  d.setDate(d.getDate() + day - 1);
-  return d.toISOString().slice(0, 10);
-}
-
-function getDayOfWeek(dateStr) {
-  if (!dateStr) return '';
-  const days = ['日', '一', '二', '三', '四', '五', '六'];
-  return '周' + days[new Date(dateStr).getDay()];
-}
-
-function isToday(dateStr) {
-  if (!dateStr) return false;
-  return dateStr === new Date().toISOString().slice(0, 10);
-}
-
-function getWeightSeries() {
-  const series = [];
-  for (let day = 1; day <= TOTAL_DAYS; day++) {
-    const entry = data[day] || {};
-    const weight = getDisplayWeight(entry);
-    if (weight) series.push({ day, weight });
-  }
-  return series;
-}
-
-function renderTable() {
-  const tbody = document.getElementById('tableBody');
-  let html = '';
-
-  for (let day = 1; day <= TOTAL_DAYS; day++) {
-    const entry = data[day] || {};
-    const dateStr = entry.date || getDateForDay(day);
-    const dow = getDayOfWeek(dateStr);
-    const weekEnd = day % 7 === 0;
-
-    html += `<tr class="${weekEnd ? 'week-end' : ''} ${isToday(dateStr) ? 'today-row' : ''}">
-      <td class="day-num">${day}</td>
-      <td><input type="date" value="${dateStr}" onchange="updateField(${day},'date',this.value)" style="font-size:0.72rem;width:110px">
-      <div style="font-size:0.68rem;color:rgba(251,247,253,0.52)">${dow}</div></td>
-      <td><input type="number" step="0.1" placeholder="—" value="${entry.morningWeight || entry.weight || ''}" onchange="updateField(${day},'morningWeight',this.value)"></td>
-      <td><input type="number" step="0.1" placeholder="—" value="${entry.eveningWeight || ''}" onchange="updateField(${day},'eveningWeight',this.value)"></td>
-      <td id="me-${day}" class="wc"></td>
-      <td><input type="number" step="0.1" placeholder="—" value="${entry.bodyFat || ''}" onchange="updateField(${day},'bodyFat',this.value)" style="width:70px"></td>
-      <td id="cs-${day}" class="wc"></td>
-      <td id="cp-${day}" class="wc"></td>
-      <td><span class="ex-check ${entry.exercise ? 'checked' : ''}" id="ex-check-${day}" onclick="toggleExercise(${day})">${entry.exercise ? '✓' : ''}</span></td>
-      <td><select onchange="updateField(${day},'exType',this.value)"><option value="">—</option>${exerciseTypes.map(t => `<option ${entry.exType === t ? 'selected' : ''}>${t}</option>`).join('')}</select></td>
-      <td><input type="number" step="5" placeholder="—" value="${entry.duration || ''}" onchange="updateField(${day},'duration',this.value)" style="width:55px"></td>
-      <td><select onchange="updateField(${day},'mood',this.value)">${moods.map(m => `<option value="${m.val}" ${entry.mood === m.val ? 'selected' : ''}>${m.icon}</option>`).join('')}</select></td>
-      <td><input type="text" placeholder="备注" value="${entry.note || ''}" onchange="updateField(${day},'note',this.value)" style="width:80px"></td>
-    </tr>`;
-
-    if (weekEnd) {
-      const wn = Math.floor(day / 7);
-      html += `<tr class="week-sum"><td colspan="5">第 ${wn} 周小结</td>
-        <td id="wb-${day}"></td><td id="wa-${day}"></td><td id="wc-${day}"></td>
-        <td id="we-${day}"></td><td id="wt-${day}"></td><td id="wd-${day}"></td>
-        <td colspan="2" id="wp-${day}"></td></tr>`;
-    }
-  }
-
-  tbody.innerHTML = html;
-  calculateChanges();
-}
-
-function calculateChanges() {
-  const startW = setup.start_weight ? parseFloat(setup.start_weight) : null;
-  let prevW = startW;
-
-  for (let day = 1; day <= TOTAL_DAYS; day++) {
-    const entry = data[day] || {};
-    const weight = getDisplayWeight(entry);
-    const diffME = getMorningEveningDiff(entry);
-
-    const meEl = document.getElementById('me-' + day);
-    if (meEl) {
-      if (diffME !== null) {
-        meEl.textContent = (diffME > 0 ? '+' : '') + diffME.toFixed(1);
-        meEl.className = 'wc ' + (diffME > 0 ? 'pos' : diffME < 0 ? 'neg' : 'zero');
-      } else {
-        meEl.textContent = '';
-      }
-    }
-
-    const csEl = document.getElementById('cs-' + day);
-    if (csEl) {
-      if (startW && weight) {
-        const diff = weight - startW;
-        csEl.textContent = (diff > 0 ? '+' : '') + diff.toFixed(1);
-        csEl.className = 'wc ' + (diff > 0 ? 'pos' : diff < 0 ? 'neg' : 'zero');
-      } else {
-        csEl.textContent = '';
-      }
-    }
-
-    const cpEl = document.getElementById('cp-' + day);
-    if (cpEl) {
-      if (prevW && weight) {
-        const diff = weight - prevW;
-        cpEl.textContent = (diff > 0 ? '+' : '') + diff.toFixed(1);
-        cpEl.className = 'wc ' + (diff > 0 ? 'pos' : diff < 0 ? 'neg' : 'zero');
-      } else {
-        cpEl.textContent = '';
-      }
-    }
-
-    if (weight) prevW = weight;
-    if (day % 7 === 0) renderWeekSummary(day);
-  }
-}
-
-function renderWeekSummary(day) {
-  const ws = day - 6;
-  let weights = [];
-  let bodyFats = [];
-  let exCount = 0;
-  let exTypes = [];
-  let totalDur = 0;
-  let filled = 0;
-
-  for (let d = ws; d <= day; d++) {
-    const e = data[d] || {};
-    const displayWeight = getDisplayWeight(e);
-    const bodyFat = getBodyFatValue(e);
-    if (displayWeight) weights.push(displayWeight);
-    if (bodyFat !== null) bodyFats.push(bodyFat);
-    if (e.exercise) exCount++;
-    if (e.exType) exTypes.push(e.exType);
-    if (e.duration) totalDur += parseInt(e.duration, 10);
-    if (displayWeight || e.exercise || bodyFat !== null) filled++;
-  }
-
-  const setEl = (id, html) => {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = html;
+async function saveSetup() {
+  const newSetup = {
+    start_date: qs('startDate').value || null,
+    start_weight: parseFloat(qs('startWeight').value) || null,
+    goal_weight: parseFloat(qs('goalWeight').value) || null,
+    display_name: qs('displayNameSetting').value.trim() || currentUser?.display_name || ''
   };
+  if (currentUser?.legacy) newSetup.id = 1;
+  else newSetup.user_id = currentUser.id;
 
-  if (bodyFats.length > 0) {
-    const avgBodyFat = bodyFats.reduce((a, b) => a + b, 0) / bodyFats.length;
-    setEl('wb-' + day, `${avgBodyFat.toFixed(1)}<span style="color:rgba(251,247,253,0.5);font-size:0.7rem">%</span>`);
-  } else {
-    setEl('wb-' + day, '—');
-  }
+  Object.assign(setup, newSetup);
+  if (currentUser) currentUser.display_name = newSetup.display_name || currentUser.display_name;
+  localStorage.setItem(getUserCacheKey('settings'), JSON.stringify(setup));
+  seedMissingDates();
+  renderApp();
 
-  if (weights.length > 0 && setup.start_weight) {
-    const avg = weights.reduce((a, b) => a + b, 0) / weights.length;
-    const diff = avg - parseFloat(setup.start_weight);
-    setEl('wa-' + day, `均 ${avg.toFixed(1)} <span style="color:${diff > 0 ? '#ffd1c2' : '#a6efcd'}">${diff > 0 ? '+' : ''}${diff.toFixed(1)}</span>`);
-  }
-
-  if (weights.length >= 2) {
-    const diff = weights[weights.length - 1] - weights[0];
-    setEl('wc-' + day, `<span style="color:${diff > 0 ? '#ffd1c2' : '#a6efcd'}">${diff > 0 ? '+' : ''}${diff.toFixed(1)}</span>`);
-  }
-
-  setEl('we-' + day, `${exCount}<span style="color:rgba(251,247,253,0.5);font-size:0.7rem">/7</span>`);
-  const uniq = [...new Set(exTypes)];
-  setEl('wt-' + day, uniq.length ? uniq.join('/') : '—');
-  setEl('wd-' + day, totalDur > 0 ? `${totalDur}<span style="color:rgba(251,247,253,0.5);font-size:0.7rem">分</span>` : '—');
-
-  let dots = '';
-  let df = 0;
-  for (let d = ws; d <= day; d++) {
-    const e = data[d] || {};
-    const f = getDisplayWeight(e) || e.exercise || getBodyFatValue(e) !== null;
-    if (f) df++;
-    dots += `<span class="wd ${f ? 'f' : ''}"></span>`;
-  }
-  setEl('wp-' + day, `<div class="week-dots">${dots}<span style="margin-left:4px;font-size:0.7rem;color:rgba(251,247,253,0.52)">${df}/7</span></div>`);
-}
-
-function renderWeightTrend() {
-  const chartEl = document.getElementById('trendChart');
-  const metaEl = document.getElementById('trendMeta');
-  const series = getWeightSeries();
-
-  if (series.length < 2) {
-    chartEl.innerHTML = '<div class="trend-empty">先录入至少 2 次体重，这里就会自动生成趋势图</div>';
-    metaEl.textContent = series.length === 1 ? '目前只有 1 条体重记录' : '还没有足够的数据';
+  if (!(supabaseClient && isOnline)) {
+    showToast('离线模式，设置已缓存到本地');
     return;
   }
 
-  const weights = series.map(item => item.weight);
-  const minW = Math.min(...weights);
-  const maxW = Math.max(...weights);
-  const range = Math.max(maxW - minW, 0.8);
-  const width = 720;
-  const height = 180;
-  const padX = 18;
-  const padY = 18;
-  const innerW = width - padX * 2;
-  const innerH = height - padY * 2;
-
-  const points = series.map((item, index) => {
-    const x = padX + (series.length === 1 ? innerW / 2 : (index / (series.length - 1)) * innerW);
-    const y = padY + ((maxW - item.weight) / range) * innerH;
-    return { x, y, ...item };
-  });
-
-  const linePath = points.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
-  const areaPath = `${linePath} L ${points[points.length - 1].x.toFixed(1)} ${(height - padY).toFixed(1)} L ${points[0].x.toFixed(1)} ${(height - padY).toFixed(1)} Z`;
-  const first = series[0].weight;
-  const last = series[series.length - 1].weight;
-  const diff = last - first;
-  const color = diff <= 0 ? '#9ef1cd' : '#ffd1ae';
-
-  chartEl.innerHTML = `
-    <svg class="trend-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" aria-label="体重趋势图">
-      <line class="trend-grid" x1="${padX}" y1="${padY}" x2="${width - padX}" y2="${padY}"></line>
-      <line class="trend-grid" x1="${padX}" y1="${height / 2}" x2="${width - padX}" y2="${height / 2}"></line>
-      <line class="trend-grid" x1="${padX}" y1="${height - padY}" x2="${width - padX}" y2="${height - padY}"></line>
-      <path class="trend-area" d="${areaPath}" style="fill:${diff <= 0 ? 'rgba(158,241,205,0.20)' : 'rgba(255,209,174,0.20)'}"></path>
-      <path class="trend-line" d="${linePath}" style="stroke:${color}"></path>
-      ${points.map((p, idx) => `<circle class="trend-dot" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${idx === points.length - 1 ? 4.5 : 3.2}" style="fill:${color}"></circle>`).join('')}
-    </svg>
-  `;
-
-  metaEl.innerHTML = `最近 ${series.length} 次记录 ${diff === 0 ? '持平' : (diff < 0 ? `下降 ${Math.abs(diff).toFixed(1)} kg` : `上升 ${diff.toFixed(1)} kg`)}`;
+  setSync('saving');
+  try {
+    const table = currentUser?.legacy ? 'user_settings' : 'app_user_settings';
+    const row = currentUser?.legacy
+      ? {
+          id: 1,
+          start_date: newSetup.start_date,
+          start_weight: newSetup.start_weight,
+          goal_weight: newSetup.goal_weight,
+          access_password: setup.access_password || '123456'
+        }
+      : newSetup;
+    const { error } = await supabaseClient.from(table).upsert(row);
+    if (error) throw error;
+    setSync('online');
+    showToast('设置已保存');
+  } catch (error) {
+    console.error('saveSetup failed', error);
+    setSync('offline');
+    showToast('设置保存失败，已缓存到本地');
+  }
 }
 
-function updateStats() {
-  let curW = null;
-  let latestBodyFat = null;
-  let latestCompare = null;
-  let exDays = 0;
-  let filledDays = 0;
+function setWeightRange(key) {
+  weightRange = key;
+  renderWeightChart();
+}
 
-  for (let day = 1; day <= TOTAL_DAYS; day++) {
-    const e = data[day] || {};
-    const displayWeight = getDisplayWeight(e);
-    const bodyFat = getBodyFatValue(e);
-    const morningEveningDiff = getMorningEveningDiff(e);
-    if (displayWeight) curW = displayWeight;
-    if (displayWeight || e.exercise || bodyFat !== null) filledDays = Math.max(filledDays, day);
-    if (bodyFat !== null) latestBodyFat = bodyFat;
-    if (morningEveningDiff !== null) latestCompare = morningEveningDiff;
-    if (e.exercise) exDays++;
-  }
-
-  const startW = setup.start_weight ? parseFloat(setup.start_weight) : null;
-  const goalW = setup.goal_weight ? parseFloat(setup.goal_weight) : null;
-
-  document.getElementById('currentWeight').innerHTML = curW ? `${curW.toFixed(1)} <span class="unit">kg</span>` : '— <span class="unit">kg</span>';
-
-  const tlEl = document.getElementById('totalLoss');
-  if (startW && curW) {
-    const loss = startW - curW;
-    tlEl.innerHTML = `${loss > 0 ? '-' : '+'}${Math.abs(loss).toFixed(1)} <span class="unit">kg</span>`;
-    tlEl.className = 'value ' + (loss > 0 ? 'green' : 'red');
-  } else {
-    tlEl.innerHTML = '— <span class="unit">kg</span>';
-  }
-
-  const dcEl = document.getElementById('dailyCompare');
-  if (latestCompare !== null) {
-    dcEl.innerHTML = `${latestCompare > 0 ? '+' : ''}${latestCompare.toFixed(1)} <span class="unit">kg</span>`;
-    dcEl.className = 'value ' + (latestCompare > 0 ? 'red' : latestCompare < 0 ? 'green' : 'blue');
-  } else {
-    dcEl.innerHTML = '— <span class="unit">kg</span>';
-    dcEl.className = 'value';
-  }
-
-  const bfEl = document.getElementById('bodyFatStat');
-  if (latestBodyFat !== null) {
-    bfEl.innerHTML = `${latestBodyFat.toFixed(1)} <span class="unit">%</span>`;
-    bfEl.className = 'value blue';
-  } else {
-    bfEl.innerHTML = '— <span class="unit">%</span>';
-    bfEl.className = 'value';
-  }
-
-  document.getElementById('exerciseDays').innerHTML = `${exDays}<span class="unit">天</span>`;
-  document.getElementById('totalDays').innerHTML = `${filledDays}<span class="unit">/100</span>`;
-
-  const tgEl = document.getElementById('toGoal');
-  if (goalW && curW) {
-    const diff = curW - goalW;
-    if (diff <= 0) {
-      tgEl.innerHTML = '已达标';
-      tgEl.className = 'value green';
-    } else {
-      tgEl.innerHTML = `${diff.toFixed(1)} <span class="unit">kg</span>`;
-      tgEl.className = 'value red';
-    }
-  } else {
-    tgEl.innerHTML = '— <span class="unit">kg</span>';
-  }
-
-  const pct = Math.round((filledDays / TOTAL_DAYS) * 100);
-  const bar = document.getElementById('progressBar');
-  bar.style.width = pct + '%';
-  bar.textContent = pct + '%';
-  renderWeightTrend();
+function setBodyFatRange(key) {
+  bodyFatRange = key;
+  renderBodyFatChart();
 }
 
 function setSync(state) {
-  const dot = document.getElementById('syncDot');
-  const text = document.getElementById('syncText');
+  const text = qs('syncText');
+  const dot = qs('syncDot');
   if (state === 'saving') {
+    text.textContent = '保存中...';
     dot.className = 'sync-dot saving';
-    text.innerHTML = '保存中... <span class="sync-dot saving" id="syncDot"></span>';
   } else if (state === 'online') {
+    text.textContent = '已连接';
     dot.className = 'sync-dot online';
-    text.innerHTML = '已连接 <span class="sync-dot online" id="syncDot"></span>';
     isOnline = true;
-  } else if (state === 'offline') {
+  } else {
+    text.textContent = '离线模式';
     dot.className = 'sync-dot offline';
-    text.innerHTML = '离线模式 <span class="sync-dot offline" id="syncDot"></span>';
   }
 }
 
 function updateSyncStatus() {
-  if (isOnline) setSync('online');
-  else setSync('offline');
+  setSync(isOnline ? 'online' : 'offline');
 }
 
 function logout() {
-  document.getElementById('mainApp').style.display = 'none';
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('loginPwd').value = '';
+  qs('mainApp').classList.add('hidden');
+  qs('loginScreen').classList.remove('hidden');
+  qs('loginName').value = '';
+  qs('loginPwd').value = '';
+  qs('registerPwd2').value = '';
+  qs('displayName').value = '';
   data = {};
   setup = {};
+  currentUser = null;
+  isOnline = true;
+  currentWeek = 1;
+  selectedDay = 1;
+  historyOpen = false;
+  currentRoute = 'today';
+  window.location.hash = 'today';
 }
 
-function showToast(msg) {
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.style.opacity = '0', 2000);
-  setTimeout(() => t.remove(), 2400);
+function showToast(message) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+  setTimeout(() => { toast.remove(); }, 2400);
 }
 
 setInterval(async () => {
   if (!isOnline && supabaseClient) {
     try {
-      const { error } = await supabaseClient.from('user_settings').select('id').limit(1);
+      const table = currentUser?.legacy ? 'user_settings' : 'app_users';
+      const { error } = await supabaseClient.from(table).select('id').limit(1);
       if (!error) {
         isOnline = true;
         setSync('online');
         showToast('已重新连接');
       }
-    } catch (e) {}
+    } catch (error) {}
   }
 }, 30000);
+
+window.addEventListener('hashchange', () => {
+  currentRoute = getRouteFromHash();
+  if (!qs('mainApp').classList.contains('hidden')) {
+    updateVisibleRoute();
+  }
+});
 </script>
 </body>
 </html>
